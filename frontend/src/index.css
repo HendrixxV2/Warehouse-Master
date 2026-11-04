@@ -1,0 +1,87 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* css-lint disable unknownAtRules */
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */
+
+/* ─── Tema oscuro (default) ─────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  --bg-base:       #08090D;
+  --bg-elevated:   #0F1117;
+  --bg-subtle:     #16181F;
+  --border:        rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --text-primary:  #F2F3F7;
+  --text-secondary:#8E93A0;
+  --text-tertiary: #575C68;
+  --accent:        #7C5CFF;
+  --accent-hover:  #8F73FF;
+  --accent-muted:  rgba(124, 92, 255, 0.14);
+  --success:       #3DDC97;
+  --warning:       #FBBF24;
+  --danger:        #F87171;
+  --info:          #60A5FA;
+  --shadow-card:   0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
+  --shadow-modal:  0 24px 48px -12px rgba(0,0,0,0.6);
+}
+
+/* ─── Tema claro ────────────────────────────────────── */
+:root[data-theme="light"] {
+  --bg-base:       #F6F7F9;
+  --bg-elevated:   #FFFFFF;
+  --bg-subtle:     #EEF0F4;
+  --border:        rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --text-primary:  #0B0F19;
+  --text-secondary:#5A6071;
+  --text-tertiary: #8A909E;
+  --accent:        #5B4CE0;
+  --accent-hover:  #4A3CC7;
+  --accent-muted:  rgba(91, 76, 224, 0.10);
+  --success:       #0EA57A;
+  --warning:       #D97706;
+  --danger:        #DC2626;
+  --info:          #2563EB;
+  --shadow-card:   0 1px 2px rgba(15,23,42,0.04), 0 4px 12px -4px rgba(15,23,42,0.08);
+  --shadow-modal:  0 24px 48px -12px rgba(15,23,42,0.18);
+}
+
+/* ─── Sidebar fija (no cambia con el tema) ──────────── */
+:root {
+  --sidebar-bg:          #0B0C10;
+  --sidebar-border:      rgba(255, 255, 255, 0.06);
+  --sidebar-text:        #B4B8C5;
+  --sidebar-text-active: #FFFFFF;
+  --sidebar-item-hover:  rgba(255, 255, 255, 0.04);
+  --sidebar-item-active: rgba(124, 92, 255, 0.16);
+}
+
+/* ─── Reset y base ──────────────────────────────────── */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  transition: background 200ms, color 200ms;
+}
+::selection { background: var(--accent-muted); color: var(--text-primary); }
+
+/* Scrollbar discreta */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+
+/* ─── Utilidades custom ─────────────────────────────── */
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-feature-settings: 'tnum'; }
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent);
+}
