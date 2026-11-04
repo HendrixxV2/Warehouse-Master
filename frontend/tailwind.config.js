@@ -1,6 +1,57 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}', './index.html'],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  safelist: [
+    // Layout
+    'flex', 'flex-col', 'flex-1', 'items-center', 'items-end', 'items-start', 'justify-center', 'justify-between', 'justify-end',
+    'gap-3', 'gap-4', 'gap-1.5', 'gap-2',
+    'p-4', 'p-5', 'p-6', 'p-3', 'p-2',
+    'px-4', 'px-6', 'px-8', 'px-3', 'px-5',
+    'py-4', 'py-8', 'py-3', 'py-3.5', 'py-16', 'py-12',
+    'h-16', 'h-14', 'h-9', 'h-8', 'h-6', 'h-72',
+    'w-full', 'w-64', 'w-24', 'w-[248px]', 'w-[3px]', 'w-[1400px]',
+    'min-w-0', 'size-8', 'size-9', 'size-7', 'size-1.5', 'size-16',
+    'rounded-lg', 'rounded-md', 'rounded-xl', 'rounded-2xl', 'rounded-full', 'rounded-r-full',
+    'border', 'border-b', 'border-t', 'border-r', 'border-line', 'border-line-strong',
+    'bg-white', 'bg-transparent',
+    'text-white', 'text-[13px]', 'text-[14px]', 'text-[15px]', 'text-[22px]', 'text-[11px]', 'text-[12px]',
+    'font-medium', 'font-semibold', 'font-normal',
+    'uppercase', 'tracking-wide', 'tracking-tight', 'tracking-[0.08em]',
+    'leading-tight', 'leading-none',
+    'mb-1', 'mb-1.5', 'mb-4', 'mt-1', 'mt-0.5', 'mt-3',
+    'absolute', 'relative', 'fixed', 'sticky', 'inset-0', 'top-0', 'left-0', 'left-3', 'top-1.5', 'right-1.5',
+    'z-20', 'z-50',
+    'grid', 'place-items-center', 'grid-cols-1', 'grid-cols-2', 'grid-cols-4', 'col-span-2',
+    'overflow-hidden', 'overflow-y-auto', 'overflow-x-auto',
+    'animate-pulse',
+    'transition', 'transition-colors', 'transition-opacity',
+    'opacity-0', 'opacity-50',
+    'group', 'group-hover:opacity-100',
+    'disabled:opacity-50', 'disabled:pointer-events-none',
+    'max-w-md', 'max-w-[1400px]', 'mx-auto',
+    'space-y-6', 'space-y-0.5',
+    'divide-y', 'divide-line',
+    'text-left', 'text-right', 'truncate', 'shrink-0',
+    'min-h-screen',
+    // Custom colors (bg-*)
+    'bg-base', 'bg-elevated', 'bg-subtle', 'bg-accent', 'bg-success', 'bg-warning', 'bg-danger', 'bg-info',
+    'bg-sidebar-bg', 'bg-accent-muted', 'bg-success/10', 'bg-warning/10', 'bg-danger/10', 'bg-info/10',
+    'bg-base/60',
+    // Custom colors (text-*)
+    'text-fg', 'text-fg-muted', 'text-fg-faint',
+    'text-success', 'text-warning', 'text-danger', 'text-info', 'text-accent', 'text-accent-hover', 'text-sidebar-text', 'text-sidebar-text-active',
+    // Custom colors (border-*)
+    'border-line', 'border-line-strong', 'border-sidebar-border',
+    'border-success/20', 'border-warning/20', 'border-danger/20', 'border-info/20', 'border-accent/25',
+    // Shadows
+    'shadow-card', 'shadow-modal',
+    // Hover variants
+    'hover:bg-subtle', 'hover:bg-subtle/40', 'hover:bg-danger/10',
+    'hover:text-fg', 'hover:text-fg-hover', 'hover:text-sidebar-active',
+    'hover:border-line-strong',
+    // Placeholder
+    'placeholder:text-fg-faint',
+  ],
   darkMode: ['class', '[data-theme="dark"]'],
   theme: {
     extend: {

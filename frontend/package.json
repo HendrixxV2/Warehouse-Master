@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "tailwind": "node scripts/generate-tailwind.js",
+    "predev": "npm run tailwind",
+    "prestart": "npm run tailwind",
+    "prebuild": "npm run tailwind",
     "dev": "react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build"
