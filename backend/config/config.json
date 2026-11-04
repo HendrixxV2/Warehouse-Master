@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "root",
-    "password": "",
-    "database": "warehouse_master",
+    "username": "Hendrixx",
+    "password": "123456",
+    "database": "WarehouseMaster",
     "host": "127.0.0.1",
     "port": 3306,
     "dialect": "mysql",
