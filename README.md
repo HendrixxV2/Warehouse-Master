@@ -4,8 +4,9 @@ Sistema de gestión de almacenes con API REST en Express, Sequelize y MySQL.
 
 ## Preparar la base de datos
 
-1. Configura la conexión y crea la base de datos indicada en `backend/config/config.json`.
-2. Desde la raíz del proyecto instala dependencias y ejecuta las migraciones:
+1. Ajusta las variables de conexión en `.env` si tu servidor MySQL usa otros valores. El archivo no se versiona; usa `.env.example` como referencia.
+2. Crea la base de datos indicada por `DB_NAME` en tu servidor MySQL.
+3. Desde la raíz del proyecto instala dependencias y ejecuta las migraciones:
 
    ```sh
    npm install
@@ -13,7 +14,7 @@ Sistema de gestión de almacenes con API REST en Express, Sequelize y MySQL.
    npm run seed:all
    ```
 
-3. Inicia la API:
+4. Inicia la API:
 
    ```sh
    npm run dev
