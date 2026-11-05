@@ -25,11 +25,15 @@ export function AuthProvider({ children }) {
   }, [token, user]);
 
   const login = (tok, usr) => {
+    localStorage.setItem(TOKEN_KEY, tok);
+    localStorage.setItem(USER_KEY, JSON.stringify(usr));
     setTokenState(tok);
     setUserState(usr);
   };
 
   const logout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
     setTokenState(null);
     setUserState(null);
   };
