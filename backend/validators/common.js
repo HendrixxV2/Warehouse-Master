@@ -76,9 +76,9 @@ const reglas = {
       : '{field} debe ser un correo electrónico válido.'
   ),
   password: (value) => (
-    typeof value === 'string' && value.length >= 6 && value.length <= 128
+    typeof value === 'string' && value.length >= 8 && value.length <= 128
       ? null
-      : '{field} debe tener entre 6 y 128 caracteres.'
+      : '{field} debe tener entre 8 y 128 caracteres.'
   ),
   opcion: (options) => (value) => (
     options.includes(value)

@@ -4,6 +4,13 @@ const bcrypt = require('bcryptjs');
 
 const SALT_ROUNDS = 10;
 
+const serializarUsuario = (usuario) => ({
+  id: usuario.id,
+  nombre: usuario.nombre,
+  email: usuario.email,
+  rol: usuario.rol,
+});
+
 module.exports = {
   async registro(req, res) {
     try {
@@ -11,7 +18,7 @@ module.exports = {
 
       const existe = await Usuario.findOne({ where: { email } });
       if (existe) {
-        return res.status(409).json({ errores: ['El correo electrónico ya está registrado.'] });
+        return res.status(409).json({ error: 'El correo electrónico ya está registrado.' });
       }
 
       const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -22,14 +29,15 @@ module.exports = {
         rol: rol || 'operador',
       });
 
+      const usuarioPublico = serializarUsuario(usuario);
       const token = firmarToken(usuario);
+
       return res.status(201).json({
-        mensaje: 'Usuario registrado correctamente.',
-        usuario: usuario.toJSON(),
+        ...usuarioPublico,
         token,
       });
     } catch (err) {
-      return res.status(500).json({ errores: ['Error al registrar el usuario.'] });
+      return res.status(500).json({ error: 'Error al registrar el usuario.' });
     }
   },
 
@@ -39,26 +47,25 @@ module.exports = {
 
       const usuario = await Usuario.findOne({ where: { email } });
       if (!usuario) {
-        return res.status(401).json({ errores: ['Correo o contraseña incorrectos.'] });
+        return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
       }
 
       const valido = await usuario.validarPassword(password);
       if (!valido) {
-        return res.status(401).json({ errores: ['Correo o contraseña incorrectos.'] });
+        return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
       }
 
       const token = firmarToken(usuario);
       return res.json({
-        mensaje: 'Inicio de sesión exitoso.',
-        usuario: usuario.toJSON(),
         token,
+        usuario: serializarUsuario(usuario),
       });
     } catch (err) {
-      return res.status(500).json({ errores: ['Error al iniciar sesión.'] });
+      return res.status(500).json({ error: 'Error al iniciar sesión.' });
     }
   },
 
   async me(req, res) {
-    return res.json({ usuario: req.usuario });
+    return res.json(serializarUsuario(req.user || req.usuario));
   },
 };

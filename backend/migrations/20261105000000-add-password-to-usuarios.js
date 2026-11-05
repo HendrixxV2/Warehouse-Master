@@ -2,14 +2,28 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('usuarios', 'password', {
-      type: Sequelize.STRING(255),
-      allowNull: false,
-      defaultValue: '',
-    });
+    const columns = await queryInterface.describeTable('usuarios');
+
+    if (!columns.password) {
+      if (columns.contraseña) {
+        await queryInterface.renameColumn('usuarios', 'contraseña', 'password');
+      } else {
+        await queryInterface.addColumn('usuarios', 'password', {
+          type: Sequelize.STRING(255),
+          allowNull: false,
+          defaultValue: '',
+        });
+      }
+    }
   },
 
   async down(queryInterface) {
-    await queryInterface.removeColumn('usuarios', 'password');
+    const columns = await queryInterface.describeTable('usuarios');
+
+    if (columns.password && !columns.contraseña) {
+      await queryInterface.renameColumn('usuarios', 'password', 'contraseña');
+    } else if (columns.password) {
+      await queryInterface.removeColumn('usuarios', 'password');
+    }
   },
 };

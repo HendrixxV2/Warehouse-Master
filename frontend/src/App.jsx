@@ -28,6 +28,23 @@ export default function App() {
           <Route path="categorias" element={<ResourcePage config={resourcePages.categorias} />} />
           <Route path="almacenes" element={<ResourcePage config={resourcePages.almacenes} />} />
           <Route path="usuarios" element={<ResourcePage config={resourcePages.usuarios} />} />
+          <Route path="clientes" element={<ResourcePage config={resourcePages.clientes} />} />
+          <Route path="transportistas" element={<ResourcePage config={resourcePages.transportistas} />} />
+          <Route path="ordenes-compra" element={<ResourcePage config={resourcePages.ordenesCompra} />} />
+          <Route path="recepciones" element={<ResourcePage config={resourcePages.recepciones} />} />
+          <Route path="ubicaciones" element={<ResourcePage config={resourcePages.ubicaciones} />} />
+          <Route path="lotes" element={<ResourcePage config={resourcePages.lotes} />} />
+          <Route path="auditorias" element={<ResourcePage config={resourcePages.auditorias} />} />
+          <Route path="incidencias" element={<ResourcePage config={resourcePages.incidencias} />} />
+          <Route path="turnos" element={<ResourcePage config={resourcePages.turnos} />} />
+          <Route path="paquetes" element={<ResourcePage config={resourcePages.paquetes} />} />
+          <Route path="etiquetas" element={<ResourcePage config={resourcePages.etiquetas} />} />
+          <Route path="tarifas" element={<ResourcePage config={resourcePages.tarifas} />} />
+          <Route path="contratos" element={<ResourcePage config={resourcePages.contratos} />} />
+          <Route path="inventario-critico" element={<ResourcePage config={resourcePages.inventarioCritico} />} />
+          <Route path="pedidos-internos" element={<ResourcePage config={resourcePages.pedidosInternos} />} />
+          <Route path="costos" element={<ResourcePage config={resourcePages.costos} />} />
+          <Route path="permisos" element={<ResourcePage config={resourcePages.permisos} />} />
           <Route
             path="*"
             element={

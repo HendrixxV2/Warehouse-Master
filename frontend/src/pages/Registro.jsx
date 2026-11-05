@@ -24,13 +24,20 @@ export default function Registro() {
     setError(null);
     setSaving(true);
     try {
-      const { token, usuario } = await api.auth.registro({
+      const data = await api.auth.registro({
         nombre: form.nombre.trim(),
         email: form.email.trim(),
         password: form.password,
         rol: form.rol,
       });
-      login(token, usuario);
+      const token = data.token;
+      const usuario = data.usuario || {
+        id: data.id,
+        nombre: data.nombre,
+        email: data.email,
+        rol: data.rol,
+      };
+      if (token) login(token, usuario);
       navigate('/');
     } catch (err) {
       setError(err.message || 'No se pudo completar el registro.');
@@ -80,7 +87,7 @@ export default function Registro() {
               />
               <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-faint" />
             </Field>
-            <Field label="Contraseña (mín. 6 caracteres)">
+            <Field label="Contraseña (mín. 8 caracteres)">
               <Input
                 type="password"
                 placeholder="••••••••"

@@ -18,10 +18,17 @@ export default function Login() {
     setError(null);
     setSaving(true);
     try {
-      const { token, usuario } = await api.auth.login({
+      const data = await api.auth.login({
         email: form.email.trim(),
         password: form.password,
       });
+      const token = data.token;
+      const usuario = data.usuario || {
+        id: data.id,
+        nombre: data.nombre,
+        email: data.email,
+        rol: data.rol,
+      };
       login(token, usuario);
       navigate('/');
     } catch (err) {
