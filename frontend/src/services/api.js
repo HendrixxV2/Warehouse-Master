@@ -1,10 +1,32 @@
 const BASE = import.meta.env?.VITE_API_URL || 'http://localhost:4000/api';
+const TOKEN_KEY = 'wm_token';
+
+function getToken() {
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function cerrarSesion() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem('wm_user');
+  window.location.reload();
+}
 
 async function request(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { ...headers, ...(opts.headers || {}) },
     ...opts,
   });
+  if (res.status === 401) {
+    cerrarSesion();
+    throw new Error('Sesión expirada. Inicia sesión de nuevo.');
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.errores?.join(' | ') || err.error || `HTTP ${res.status}`);

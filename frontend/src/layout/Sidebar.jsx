@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart, Boxes,
-  Truck, Tags, Warehouse, Users, Boxes as Logo,
+  Truck, Tags, Warehouse, Users, Boxes as Logo, LogOut,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const NAV = [
   { section: 'Operaciones' },
@@ -19,6 +21,14 @@ const NAV = [
 ];
 
 export default function Sidebar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <aside className="w-[248px] shrink-0 h-screen sticky top-0 flex flex-col bg-sidebar-bg border-r border-sidebar-border">
       {/* Logo */}
@@ -65,14 +75,22 @@ export default function Sidebar() {
 
       {/* User */}
       <div className="p-3 border-t border-sidebar-border">
-        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-hover transition cursor-pointer">
+        <div
+          className="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-hover transition cursor-pointer"
+          onClick={handleLogout}
+        >
           <div className="size-8 rounded-full bg-gradient-to-br from-accent to-info grid place-items-center text-white text-[12px] font-semibold">
-            OP
+            {user?.nombre?.charAt(0) || 'U'}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-medium text-sidebar-active truncate">Operador Demo</p>
-            <p className="text-[11px] text-sidebar-text truncate">Sin sesión · modo libre</p>
+            <p className="text-[12px] font-medium text-sidebar-active truncate">
+              {user?.nombre || 'Usuario'}
+            </p>
+            <p className="text-[11px] text-sidebar-text truncate capitalize">
+              {user?.rol || '—'} · sesión activa
+            </p>
           </div>
+          <LogOut size={14} className="text-sidebar-text/60 hover:text-fg transition ml-2" />
         </div>
       </div>
     </aside>

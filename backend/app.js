@@ -6,6 +6,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/auth', require('./routes/authRoutes'));
+
+const { autenticar } = require('./middleware/auth');
+app.use('/api', autenticar);
+
 app.use('/api/productos',    require('./routes/productoRoutes'));
 app.use('/api/movimientos',  require('./routes/movimientoStockRoutes'));
 app.use('/api/pedidos',      require('./routes/pedidoRoutes'));

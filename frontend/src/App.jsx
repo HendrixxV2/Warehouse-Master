@@ -4,13 +4,21 @@ import AppShell from './layout/AppShell';
 import Dashboard from './pages/Dashboard';
 import Productos from './pages/Productos';
 import ResourcePage from './pages/ResourcePage';
+import Login from './pages/Login';
+import Registro from './pages/Registro';
 import { resourcePages } from './pages/resourcePages';
+import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<AppShell />}>
+        {/* Rutas públicas (no requieren sesión) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+
+        {/* Rutas privadas (requieren sesión iniciada) */}
+        <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="productos" element={<Productos />} />
           <Route path="movimientos" element={<ResourcePage config={resourcePages.movimientos} />} />

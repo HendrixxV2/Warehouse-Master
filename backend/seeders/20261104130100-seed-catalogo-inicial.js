@@ -1,6 +1,9 @@
 'use strict';
 
+const bcrypt = require('bcryptjs');
 const { sequelize, Categoria, Proveedor, Almacen, Usuario } = require('../models');
+
+const CONTRASENIA_DEMO = 'WarehouseDemo123';
 
 module.exports = {
   async up() {
@@ -24,11 +27,17 @@ module.exports = {
         defaults: { ubicacion: 'Por definir', capacidad: null },
         transaction,
       });
-      await Usuario.findOrCreate({
+      const [usuario] = await Usuario.findOrCreate({
         where: { email: 'operador.demo@warehouse.local' },
         defaults: { nombre: 'Operador de demostración', rol: 'operador' },
         transaction,
       });
+      // Si el usuario ya existía (sin contraseña) o es nuevo, se asigna una
+      // contraseña de demostración para que el sistema se pueda probar.
+      if (!usuario.password) {
+        usuario.password = await bcrypt.hash(CONTRASENIA_DEMO, 10);
+        await usuario.save({ transaction });
+      }
 
       await sequelize.models.Producto.findOrCreate({
         where: { nombre: 'Producto de demostración' },
