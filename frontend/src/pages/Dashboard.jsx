@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Package, TrendingUp, ShoppingCart, AlertTriangle, ArrowUpRight, ArrowDownRight,
 } from 'lucide-react';
@@ -48,9 +49,9 @@ export default function Dashboard() {
         <div className="lg:col-span-2 rounded-2xl bg-elevated border border-line shadow-card">
           <div className="px-6 h-14 flex items-center justify-between border-b border-line">
             <h3 className="text-[14px] font-semibold text-fg">Actividad reciente</h3>
-            <a href="/movimientos" className="text-[12px] text-accent hover:text-accent-hover font-medium">
+            <Link to="/movimientos" className="text-[12px] text-accent hover:text-accent-hover font-medium">
               Ver todo →
-            </a>
+            </Link>
           </div>
           <ul className="divide-y divide-line">
             {(data.movimientosRecientes || []).map((m) => (

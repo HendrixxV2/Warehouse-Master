@@ -1,40 +1,97 @@
-# Warehouse Master
+# 🏢 Warehouse Master
 
-Sistema de gestión de almacenes con API REST en Express, Sequelize y MySQL.
+**Sistema de Gestión de Almacenes (WMS) — aplicación full-stack**
 
-## Preparar la base de datos
+Warehouse Master es un mini-WMS que permite administrar el catálogo de productos, controlar el stock en tiempo real mediante movimientos de entrada/salida, gestionar pedidos y sus líneas de detalle, y consultar un dashboard con KPIs operativos. Está pensado como proyecto académico y de portafolio: cubre el ciclo completo de un CRUD profesional con validaciones, migraciones versionadas y una interfaz moderna con tema claro/oscuro.
 
-1. Ajusta las variables de conexión en `.env` si tu servidor MySQL usa otros valores. El archivo no se versiona; usa `.env.example` como referencia.
-2. Crea la base de datos indicada por `DB_NAME` en tu servidor MySQL.
-3. Desde la raíz del proyecto instala dependencias y ejecuta las migraciones:
+---
 
-   ```sh
-   npm install
-   npm run db:migrate
-   npm run seed:all
-   ```
+## 📋 Tabla de contenidos
 
-4. Inicia la API:
+1. [Qué hace el sistema](#1-qué-hace-el-sistema)
+2. [Stack tecnológico](#2-stack-tecnológico)
+3. [Estructura del proyecto](#3-estructura-del-proyecto)
+4. [Requisitos previos](#4-requisitos-previos)
+5. [Instalación paso a paso](#5-instalación-paso-a-paso)
+6. [Cómo levantar el proyecto](#6-cómo-levantar-el-proyecto)
+7. [Modelo de datos](#7-modelo-de-datos)
+8. [Endpoints de la API](#8-endpoints-de-la-api)
+9. [Verificación con Postman](#9-verificación-con-postman)
+10. [Diseño del frontend](#10-diseño-del-frontend)
+11. [Scripts disponibles](#11-scripts-disponibles)
+12. [Limitaciones conocidas](#12-limitaciones-conocidas)
+13. [Roadmap](#13-roadmap)
+14. [Licencia](#14-licencia)
 
-   ```sh
-   npm run dev
-   ```
+---
 
-La API estará disponible en `http://localhost:4000`. El seeder agrega datos de demostración iniciales; no crea contraseñas ni habilita autenticación.
+## 1. Qué hace el sistema
 
-## Recursos de la API
+- **CRUD completo** sobre 8 entidades relacionadas: usuarios, proveedores, categorías, almacenes, productos, movimientos de stock, pedidos y detalles de pedido.
+- **Validación obligatoria en backend**: toda petición pasa por un `validator` antes de llegar al controller. Las peticiones inválidas devuelven `400` con un array `errores[]` y **no tocan la base de datos**.
+- **Control de stock transaccional**: crear un movimiento de `entrada` incrementa `productos.stock_actual`; uno de `salida` lo decrementa. Si el stock resultante sería negativo, la operación hace `rollback` y responde `400`.
+- **Dashboard ejecutivo** con 4 KPIs (total de productos, stock total, pedidos pendientes, productos con stock bajo), feed de actividad reciente y alertas de stock.
+- **Interfaz React** con sidebar fija oscura, tema claro/oscuro persistido, y componentes reutilizables (tabla, modal, badges, tarjetas de KPI).
 
-Cada recurso ofrece `GET /`, `GET /:id`, `POST /`, `PUT /:id` y `DELETE /:id`.
+---
 
-| Ruta | Recurso | Campos principales |
-| --- | --- | --- |
-| `/api/productos` | Productos | `nombre`, `precio`, `stock_actual`, `id_proveedor`, `id_categoria`, `id_almacen` |
-| `/api/proveedores` | Proveedores | `nombre`, `email`, `telefono`, `direccion` |
-| `/api/categorias` | Categorías | `nombre`, `descripcion` |
-| `/api/almacenes` | Almacenes | `nombre`, `ubicacion`, `capacidad` |
-| `/api/usuarios` | Usuarios | `nombre`, `email`, `rol` |
-| `/api/movimientos` | Movimientos de stock | `tipo` (`entrada`/`salida`), `cantidad`, `id_usuario`, `id_producto`, `fecha` |
-| `/api/pedidos` | Pedidos | `id_usuario`, `estado`, `fecha` |
-| `/api/detalles` | Detalles de pedido | `id_pedido`, `id_producto`, `cantidad` |
+## 2. Stack tecnológico
 
-El stock se ajusta transaccionalmente al crear, editar o eliminar movimientos. El total del pedido se recalcula al agregar, editar o eliminar sus detalles; cada detalle guarda una copia del precio vigente cuando se crea.
+| Capa | Tecnología |
+| ------ | ----------- |
+| Backend | Node.js 18+, Express 4, Sequelize 6 |
+| Base de datos | MySQL 8 |
+| Frontend | React 18, Vite, React Router 6, Tailwind CSS 3, Lucide Icons |
+| Herramientas | `sequelize-cli`, `nodemon`, `dotenv`, `cors` |
+
+---
+
+## 3. Estructura del proyecto
+
+warehouse-master/
+├── backend/
+│ ├── config/config.js # Configuración Sequelize (lee .env)
+│ ├── controllers/ # 8 controllers (uno por entidad)
+│ ├── migrations/ # Migraciones versionadas
+│ ├── models/ # 8 modelos Sequelize
+│ ├── routes/ # 8 routers Express
+│ ├── seeders/ # Datos de prueba
+│ ├── validators/ # 8 validators (middlewares)
+│ ├── app.js # Configura Express (sin listen)
+│ ├── server.js # Conexión + listen
+│ ├── .env.example
+│ ├── .sequelizerc
+│ └── package.json
+│
+├── frontend/
+│ ├── src/
+│ │ ├── layout/ # AppShell, Sidebar, Topbar
+│ │ ├── pages/ # Dashboard, Productos, etc.
+│ │ ├── ui/ # Button, Badge, Modal, DataTable, StatCard
+│ │ ├── services/api.js # Cliente HTTP centralizado
+│ │ ├── index.css # Variables CSS (tokens) + Tailwind
+│ │ └── main.jsx
+│ ├── tailwind.config.js
+│ └── package.json
+│
+└── README.md
+
+---
+
+## 4. Requisitos previos
+
+- **Node.js** ≥ 18 (`node -v`)
+- **npm** ≥ 9 (`npm -v`)
+- **MySQL** ≥ 8 corriendo en `localhost:3306`
+- **Git** (opcional, para clonar el repo)
+
+---
+
+## 5. Instalación paso a paso
+
+### 5.1 Clonar el repositorio
+
+```bash
+git clone <url-del-repo>
+cd warehouse-master
+
