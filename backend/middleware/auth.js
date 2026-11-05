@@ -2,7 +2,8 @@
 const { Usuario } = require('../models');
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_EXPIRES_IN = '1h';
+const JWT_MAX_AGE_SECONDS = 60 * 60;
 const authScheme = String.fromCharCode(66, 97, 114, 101, 114);
 
 if (!JWT_SECRET) {
@@ -16,7 +17,7 @@ function firmarToken(usuario) {
 
 function verificarToken(token) {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_SECRET, { maxAge: JWT_MAX_AGE_SECONDS });
   } catch (err) {
     return null;
   }

@@ -1,19 +1,50 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 const TOKEN_KEY = 'wm_token';
 const USER_KEY = 'wm_user';
+const MAX_SESSION_AGE_SECONDS = 60 * 60;
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-  const [token, setTokenState] = useState(() => localStorage.getItem(TOKEN_KEY));
-  const [user, setUserState] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
-    } catch {
-      return null;
+function obtenerExpiracion(token) {
+  try {
+    const segmento = token.split('.')[1];
+    if (!segmento) return null;
+
+    const base64 = segmento.replace(/-/g, '+').replace(/_/g, '/');
+    const binario = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '='));
+    const bytes = Uint8Array.from(binario, (caracter) => caracter.charCodeAt(0));
+    const { exp, iat } = JSON.parse(new TextDecoder().decode(bytes));
+    if (!Number.isFinite(exp) || !Number.isFinite(iat)) return null;
+    return Math.min(exp, iat + MAX_SESSION_AGE_SECONDS) * 1000;
+  } catch {
+    return null;
+  }
+}
+
+function leerSesionPersistida() {
+  const token = localStorage.getItem(TOKEN_KEY);
+
+  try {
+    const user = JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+    const expiracion = token && obtenerExpiracion(token);
+
+    if (token && user && expiracion && expiracion > Date.now()) {
+      return { token, user };
     }
-  });
+  } catch {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    return { token: null, user: null };
+  }
+
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  return { token: null, user: null };
+}
+
+export function AuthProvider({ children }) {
+  const [{ token, user }, setSession] = useState(leerSesionPersistida);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,16 +58,27 @@ export function AuthProvider({ children }) {
   const login = (tok, usr) => {
     localStorage.setItem(TOKEN_KEY, tok);
     localStorage.setItem(USER_KEY, JSON.stringify(usr));
-    setTokenState(tok);
-    setUserState(usr);
+    setSession({ token: tok, user: usr });
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-    setTokenState(null);
-    setUserState(null);
-  };
+    setSession({ token: null, user: null });
+  }, []);
+
+  useEffect(() => {
+    if (!token) return undefined;
+
+    const expiracion = obtenerExpiracion(token);
+    if (!expiracion || expiracion <= Date.now()) {
+      logout();
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(logout, expiracion - Date.now());
+    return () => window.clearTimeout(timeout);
+  }, [token, logout]);
 
   const isAuthenticated = !!token && !!user;
 

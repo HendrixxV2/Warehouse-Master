@@ -29,6 +29,7 @@ Warehouse Master es un mini-WMS que permite administrar el catálogo de producto
 
 - **CRUD completo** sobre 8 entidades relacionadas: usuarios, proveedores, categorías, almacenes, productos, movimientos de stock, pedidos y detalles de pedido.
 - **Validación obligatoria en backend**: toda petición pasa por un `validator` antes de llegar al controller. Las peticiones inválidas devuelven `400` con un array `errores[]` y **no tocan la base de datos**.
+- **Sesiones JWT persistentes**: la sesión se conserva al recargar la aplicación y expira como máximo una hora después de iniciar sesión.
 - **Control de stock transaccional**: crear un movimiento de `entrada` incrementa `productos.stock_actual`; uno de `salida` lo decrementa. Si el stock resultante sería negativo, la operación hace `rollback` y responde `400`.
 - **Dashboard ejecutivo** con 4 KPIs (total de productos, stock total, pedidos pendientes, productos con stock bajo), feed de actividad reciente y alertas de stock.
 - **Interfaz React** con sidebar fija oscura, tema claro/oscuro persistido, y componentes reutilizables (tabla, modal, badges, tarjetas de KPI).
@@ -94,4 +95,3 @@ warehouse-master/
 ```bash
 git clone <url-del-repo>
 cd warehouse-master
-
