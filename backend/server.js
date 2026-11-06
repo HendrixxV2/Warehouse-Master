@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 4000;
 
 sequelize.authenticate()
   .then(() => {
+    require('./services/scheduler').startScheduler();
     console.log('✅ Conexión a MySQL establecida');
     app.listen(PORT, () => console.log(`🚀 API Warehouse Master en http://localhost:${PORT}`));
   })
