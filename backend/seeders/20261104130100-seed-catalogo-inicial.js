@@ -29,15 +29,13 @@ module.exports = {
       });
       const [usuario] = await Usuario.findOrCreate({
         where: { email: 'operador.demo@warehouse.local' },
-        defaults: { nombre: 'Operador de demostración', rol: 'operador' },
+        defaults: {
+          nombre: 'Operador de demostración',
+          rol: 'operador',
+          password: await bcrypt.hash(CONTRASENIA_DEMO, 10),
+        },
         transaction,
       });
-      // Si el usuario ya existía (sin contraseña) o es nuevo, se asigna una
-      // contraseña de demostración para que el sistema se pueda probar.
-      if (!usuario.password) {
-        usuario.password = await bcrypt.hash(CONTRASENIA_DEMO, 10);
-        await usuario.save({ transaction });
-      }
 
       await sequelize.models.Producto.findOrCreate({
         where: { nombre: 'Producto de demostración' },

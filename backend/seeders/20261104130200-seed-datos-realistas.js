@@ -5,10 +5,12 @@
  * Datos en español, coherentes con el esquema de base de datos.
  */
 
+const bcrypt = require('bcryptjs');
 const { sequelize } = require('../models');
 
 module.exports = {
   async up() {
+    const CONTRASENIA_POR_DEFECTO = await bcrypt.hash('WarehouseDemo123', 10);
     await sequelize.transaction(async (transaction) => {
       // =====================================================================
       // 1. CATEGORÍAS
@@ -97,7 +99,7 @@ module.exports = {
       for (const user of usuariosData) {
         const [record] = await sequelize.models.Usuario.findOrCreate({
           where: { email: user.email },
-          defaults: user,
+          defaults: { ...user, password: CONTRASENIA_POR_DEFECTO },
           transaction,
         });
         usuarios[user.nombre] = record.id;
