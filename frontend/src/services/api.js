@@ -19,12 +19,12 @@ async function request(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json' };
   const token = getToken();
   if (token) {
-    headers.Authorization = String.fromCharCode(66, 97, 114, 101, 114) + ' ' + token;
+    headers.Authorization = `Bearer ${token}`;
   }
 
   const res = await fetch(`${BASE}${path}`, {
-    headers: { ...headers, ...(opts.headers || {}) },
     ...opts,
+    headers: { ...headers, ...(opts.headers || {}) },
   });
 
   if (res.status === 401) {

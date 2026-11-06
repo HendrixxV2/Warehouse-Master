@@ -1,13 +1,11 @@
-﻿const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const { Usuario } = require('../models');
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = '1h';
-const JWT_MAX_AGE_SECONDS = 60 * 60;
-const authScheme = String.fromCharCode(66, 97, 114, 101, 114);
+const JWT_SECRET = (process.env.JWT_SECRET || '').trim();
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 
-if (!JWT_SECRET) {
-  throw new Error('Falta JWT_SECRET en las variables de entorno (.env).');
+if (JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET debe tener al menos 32 caracteres en el archivo .env.');
 }
 
 function firmarToken(usuario) {
@@ -17,21 +15,27 @@ function firmarToken(usuario) {
 
 function verificarToken(token) {
   try {
-    return jwt.verify(token, JWT_SECRET, { maxAge: JWT_MAX_AGE_SECONDS });
+    return jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return null;
   }
 }
 
 function autenticar(req, res, next) {
-  const authHeader = req.headers.authorization || '';
-  const partes = authHeader.split(' ');
+  const authHeader = req.headers.authorization;
 
-  if (!authHeader || partes.length !== 2 || partes[0] !== authScheme || !partes[1]) {
+  if (typeof authHeader !== 'string' || !authHeader.trim()) {
     return res.status(401).json({ error: 'Token no proporcionado' });
   }
 
-  const payload = verificarToken(partes[1]);
+  const coincidencia = authHeader.trim().match(/^Bearer\s+(\S+)$/i);
+  if (!coincidencia) {
+    return res.status(401).json({
+      error: 'Formato de autorización inválido. Usa: Bearer <token>.',
+    });
+  }
+
+  const payload = verificarToken(coincidencia[1]);
   if (!payload) {
     return res.status(401).json({ error: 'Token inválido o expirado' });
   }

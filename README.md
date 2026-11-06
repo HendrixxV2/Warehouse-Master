@@ -13,15 +13,7 @@ Warehouse Master es un mini-WMS que permite administrar el catálogo de producto
 3. [Estructura del proyecto](#3-estructura-del-proyecto)
 4. [Requisitos previos](#4-requisitos-previos)
 5. [Instalación paso a paso](#5-instalación-paso-a-paso)
-6. [Cómo levantar el proyecto](#6-cómo-levantar-el-proyecto)
-7. [Modelo de datos](#7-modelo-de-datos)
-8. [Endpoints de la API](#8-endpoints-de-la-api)
-9. [Verificación con Postman](#9-verificación-con-postman)
-10. [Diseño del frontend](#10-diseño-del-frontend)
-11. [Scripts disponibles](#11-scripts-disponibles)
-12. [Limitaciones conocidas](#12-limitaciones-conocidas)
-13. [Roadmap](#13-roadmap)
-14. [Licencia](#14-licencia)
+6. [Verificación de autenticación con Postman](#6-verificación-de-autenticación-con-postman)
 
 ---
 
@@ -29,7 +21,7 @@ Warehouse Master es un mini-WMS que permite administrar el catálogo de producto
 
 - **CRUD completo** sobre 8 entidades relacionadas: usuarios, proveedores, categorías, almacenes, productos, movimientos de stock, pedidos y detalles de pedido.
 - **Validación obligatoria en backend**: toda petición pasa por un `validator` antes de llegar al controller. Las peticiones inválidas devuelven `400` con un array `errores[]` y **no tocan la base de datos**.
-- **Sesiones JWT persistentes**: la sesión se conserva al recargar la aplicación y expira como máximo una hora después de iniciar sesión.
+- **Sesiones JWT persistentes**: la sesión se conserva al recargar la aplicación y, por defecto, expira una hora después de iniciar sesión.
 - **Control de stock transaccional**: crear un movimiento de `entrada` incrementa `productos.stock_actual`; uno de `salida` lo decrementa. Si el stock resultante sería negativo, la operación hace `rollback` y responde `400`.
 - **Dashboard ejecutivo** con 4 KPIs (total de productos, stock total, pedidos pendientes, productos con stock bajo), feed de actividad reciente y alertas de stock.
 - **Interfaz React** con sidebar fija oscura, tema claro/oscuro persistido, y componentes reutilizables (tabla, modal, badges, tarjetas de KPI).
@@ -60,9 +52,7 @@ warehouse-master/
 │ ├── validators/ # 8 validators (middlewares)
 │ ├── app.js # Configura Express (sin listen)
 │ ├── server.js # Conexión + listen
-│ ├── .env.example
-│ ├── .sequelizerc
-│ └── package.json
+│ └── ...
 │
 ├── frontend/
 │ ├── src/
@@ -75,6 +65,9 @@ warehouse-master/
 │ ├── tailwind.config.js
 │ └── package.json
 │
+├── .env.example
+├── .sequelizerc
+├── package.json
 └── README.md
 
 ---
@@ -95,3 +88,45 @@ warehouse-master/
 ```bash
 git clone <url-del-repo>
 cd warehouse-master
+```
+
+### 5.2 Configurar la base de datos y JWT
+
+Crea el archivo local `.env` a partir de la plantilla:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+En `.env`, configura `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD` para tu instancia de MySQL. Genera un secreto JWT aleatorio con Node.js:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Copia el resultado en `JWT_SECRET` en `.env`; no lo compartas ni lo subas al repositorio. La API usa `JWT_EXPIRES_IN` (por defecto, `1h`) para firmar los tokens.
+
+### 5.3 Instalar, migrar y ejecutar
+
+```bash
+npm install
+npm run db:migrate
+npm start
+```
+
+Las migraciones crean y actualizan las tablas conforme al código. Para cargar datos de demostración (incluye un usuario y un producto), ejecuta `npm run seed:all` una sola vez; la siembra es opcional.
+
+## 6. Verificación de autenticación con Postman
+
+1. Inicia sesión con `POST http://localhost:4000/api/auth/login`, encabezado `Content-Type: application/json` y cuerpo JSON:
+
+   ```json
+   {
+     "email": "operador.demo@warehouse.local",
+     "password": "WarehouseDemo123"
+   }
+   ```
+
+   Estas credenciales funcionan solo después de ejecutar `npm run seed:all`. Copia el campo `token` de la respuesta.
+2. Para `GET` o `POST http://localhost:4000/api/productos`, abre **Authorization**, selecciona **Bearer Token** y pega el token sin comillas ni el prefijo `Bearer`; Postman debe enviar `Authorization: Bearer <token>`. Para crear un producto, envía JSON con `nombre`, `precio`, `stock_actual`, `id_proveedor`, `id_categoria` e `id_almacen`.
+3. Si la respuesta dice **“Token no proporcionado”**, revisa en **Headers** que Postman haya enviado `Authorization`. Si indica formato inválido, configura el tipo **Bearer Token**; si dice inválido o expirado, inicia sesión de nuevo y usa el token más reciente.

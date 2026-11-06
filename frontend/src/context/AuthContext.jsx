@@ -2,7 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 
 const TOKEN_KEY = 'wm_token';
 const USER_KEY = 'wm_user';
-const MAX_SESSION_AGE_SECONDS = 60 * 60;
 
 const AuthContext = createContext(null);
 
@@ -14,9 +13,9 @@ function obtenerExpiracion(token) {
     const base64 = segmento.replace(/-/g, '+').replace(/_/g, '/');
     const binario = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '='));
     const bytes = Uint8Array.from(binario, (caracter) => caracter.charCodeAt(0));
-    const { exp, iat } = JSON.parse(new TextDecoder().decode(bytes));
-    if (!Number.isFinite(exp) || !Number.isFinite(iat)) return null;
-    return Math.min(exp, iat + MAX_SESSION_AGE_SECONDS) * 1000;
+    const { exp } = JSON.parse(new TextDecoder().decode(bytes));
+    if (!Number.isFinite(exp)) return null;
+    return exp * 1000;
   } catch {
     return null;
   }
