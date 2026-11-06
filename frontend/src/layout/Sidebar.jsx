@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart, Boxes,
-  Truck, Tags, Warehouse, Users, Boxes as Logo, LogOut,
+  Truck, Tags, Warehouse, Users, LogOut,
   MapPin, ClipboardList, FileText, CalendarDays, BellRing,
   ShieldCheck, CircleDollarSign, PackageCheck, Building2,
   ChevronDown, ChevronRight,
@@ -105,9 +105,11 @@ export default function Sidebar() {
   return (
     <aside className="w-[248px] shrink-0 h-screen sticky top-0 flex flex-col bg-sidebar-bg border-r border-sidebar-border">
       <div className="px-5 h-16 flex items-center gap-3 border-b border-sidebar-border">
-        <div className="size-8 rounded-lg bg-accent grid place-items-center text-white">
-          <Logo size={18} strokeWidth={2.4} />
-        </div>
+        <img
+          src="/warehouse-master-logo.jpeg"
+          alt="Logo de Warehouse Master"
+          className="size-12 shrink-0 rounded-full object-cover ring-1 ring-sidebar-border"
+        />
         <div className="leading-tight">
           <p className="text-[13px] font-semibold text-sidebar-active">Warehouse</p>
           <p className="text-[11px] text-sidebar-text">Master · WMS</p>

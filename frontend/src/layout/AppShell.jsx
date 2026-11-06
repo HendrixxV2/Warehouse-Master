@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import TaskAssistant from '../components/TaskAssistant';
 
 export default function AppShell() {
   return (
@@ -17,6 +18,7 @@ export default function AppShell() {
           </div>
         </main>
       </div>
+      <TaskAssistant />
     </div>
   );
 }

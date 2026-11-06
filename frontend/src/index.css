@@ -4,26 +4,26 @@
 /* ─── Tema oscuro (default) ─────────────────────────── */
 :root,
 :root[data-theme="dark"] {
-  --bg-base:       #08090D;
-  --bg-elevated:   #0F1117;
-  --bg-subtle:     #16181F;
-  --border:        rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --text-primary:  #F2F3F7;
-  --text-secondary:#8E93A0;
-  --text-tertiary: #575C68;
-  --accent:        #7C5CFF;
-  --accent-hover:  #8F73FF;
-  --accent-muted:  rgba(124, 92, 255, 0.14);
-  --success:       #3DDC97;
-  --warning:       #FBBF24;
-  --danger:        #F87171;
-  --info:          #60A5FA;
-  --shadow-card:   0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
-  --shadow-modal:  0 24px 48px -12px rgba(0,0,0,0.6);
-  --dashboard-accent: #45d6d1;
-  --dashboard-entry:  #30d5c2;
-  --dashboard-exit:   #5b9cff;
+  --bg-base:       #06110D;
+  --bg-elevated:   #0B1A14;
+  --bg-subtle:     #11261D;
+  --border:        rgba(193, 232, 207, 0.09);
+  --border-strong: rgba(193, 232, 207, 0.16);
+  --text-primary:  #EDF8F0;
+  --text-secondary:#A9C2B1;
+  --text-tertiary: #668273;
+  --accent:        #44B96E;
+  --accent-hover:  #58C980;
+  --accent-muted:  rgba(68, 185, 110, 0.16);
+  --success:       #4DD98A;
+  --warning:       #F4BE4F;
+  --danger:        #FF8585;
+  --info:          #68B9E8;
+  --shadow-card:   0 1px 2px rgba(0, 18, 11, 0.5), 0 8px 24px -12px rgba(0, 18, 11, 0.75);
+  --shadow-modal:  0 24px 48px -12px rgba(0, 18, 11, 0.75);
+  --dashboard-accent: #69DCA2;
+  --dashboard-entry:  #48CE90;
+  --dashboard-exit:   #5DADE2;
 }
 
 /* ─── Tema claro ────────────────────────────────────── */
@@ -52,12 +52,12 @@
 
 /* ─── Sidebar fija (no cambia con el tema) ──────────── */
 :root {
-  --sidebar-bg:          #0B0C10;
-  --sidebar-border:      rgba(255, 255, 255, 0.06);
-  --sidebar-text:        #B4B8C5;
-  --sidebar-text-active: #FFFFFF;
-  --sidebar-item-hover:  rgba(255, 255, 255, 0.04);
-  --sidebar-item-active: rgba(124, 92, 255, 0.16);
+  --sidebar-bg:          #07150E;
+  --sidebar-border:      rgba(193, 232, 207, 0.08);
+  --sidebar-text:        #AEC7B6;
+  --sidebar-text-active: #F2FBF4;
+  --sidebar-item-hover:  rgba(193, 232, 207, 0.06);
+  --sidebar-item-active: rgba(68, 185, 110, 0.17);
 }
 
 :root[data-theme="light"] {
