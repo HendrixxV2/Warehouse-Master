@@ -133,10 +133,10 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Productos" value={data.totalProductos} icon={Package} tone="accent" />
-        <StatCard label="Stock total" value={data.stockTotal.toLocaleString()} unit="uds" icon={TrendingUp} tone="success" />
-        <StatCard label="Pedidos pendientes" value={data.pedidosPendientes} icon={ShoppingCart} tone="warning" />
-        <StatCard label="Stock bajo" value={data.stockBajo} icon={AlertTriangle} tone="danger" />
+        <StatCard label="Productos" value={data.totalProductos} icon={Package} tone="accent" to="/productos" />
+        <StatCard label="Stock total" value={data.stockTotal.toLocaleString()} unit="uds" icon={TrendingUp} tone="success" to="/productos" />
+        <StatCard label="Pedidos pendientes" value={data.pedidosPendientes} icon={ShoppingCart} tone="warning" to="/pedidos" />
+        <StatCard label="Stock bajo" value={data.stockBajo} icon={AlertTriangle} tone="danger" to="/inventario-critico" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.8fr)_minmax(260px,0.8fr)] gap-4">

@@ -1,6 +1,7 @@
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-export default function StatCard({ label, value, unit, delta, icon: Icon, tone = 'accent' }) {
+export default function StatCard({ label, value, unit, delta, icon: Icon, tone = 'accent', to, onClick }) {
   const toneMap = {
     accent: 'text-accent bg-accent-muted',
     success: 'text-success bg-success/10',
@@ -10,8 +11,8 @@ export default function StatCard({ label, value, unit, delta, icon: Icon, tone =
   };
   const positive = delta >= 0;
 
-  return (
-    <div className="dashboard-kpi rounded-xl border border-line p-4 shadow-card transition hover:border-line-strong">
+  const content = (
+    <>
       <div className="flex items-center justify-between mb-3">
         <p className="text-[11px] font-medium uppercase tracking-[0.07em] text-fg-muted">{label}</p>
         <div className={`size-8 rounded-lg grid place-items-center ${toneMap[tone]}`}>
@@ -29,6 +30,12 @@ export default function StatCard({ label, value, unit, delta, icon: Icon, tone =
           <span className="text-fg-faint font-normal">vs. mes anterior</span>
         </div>
       )}
-    </div>
+    </>
   );
+
+  const className = `dashboard-kpi block w-full rounded-xl border border-line p-4 shadow-card text-left transition hover:border-line-strong ${to || onClick ? 'cursor-pointer hover:-translate-y-0.5 focus-ring' : ''}`;
+
+  if (to) return <Link to={to} className={className} aria-label={`Ver ${label}`}>{content}</Link>;
+  if (onClick) return <button type="button" onClick={onClick} className={className}>{content}</button>;
+  return <div className={className}>{content}</div>;
 }
