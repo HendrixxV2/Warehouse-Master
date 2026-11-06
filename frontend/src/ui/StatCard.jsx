@@ -11,15 +11,15 @@ export default function StatCard({ label, value, unit, delta, icon: Icon, tone =
   const positive = delta >= 0;
 
   return (
-    <div className="rounded-2xl bg-elevated border border-line p-5 shadow-card transition hover:border-line-strong">
-      <div className="flex items-start justify-between mb-4">
-        <p className="text-[12px] font-medium uppercase tracking-wide text-fg-muted">{label}</p>
-        <div className={`size-9 rounded-lg grid place-items-center ${toneMap[tone]}`}>
+    <div className="dashboard-kpi rounded-xl border border-line p-4 shadow-card transition hover:border-line-strong">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-medium uppercase tracking-[0.07em] text-fg-muted">{label}</p>
+        <div className={`size-8 rounded-lg grid place-items-center ${toneMap[tone]}`}>
           <Icon size={16} strokeWidth={2.2} />
         </div>
       </div>
       <div className="flex items-end gap-2">
-        <p className="text-[28px] font-semibold text-fg mono leading-none">{value}</p>
+        <p className="dashboard-kpi-value text-[27px] font-semibold mono leading-none">{value}</p>
         {unit && <span className="text-[13px] text-fg-muted mb-1">{unit}</span>}
       </div>
       {delta !== undefined && (
