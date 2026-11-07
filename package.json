@@ -8,7 +8,8 @@
     "start": "node backend/server.js",
     "jwt:secret": "node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\"",
     "db:migrate": "sequelize-cli db:migrate",
-    "seed:all": "sequelize-cli db:seed:all"
+    "seed:all": "sequelize-cli db:seed:all",
+    "docs:endpoints": "node generate-endpoints-pdf.js"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "mysql2": "^3.24.6",
     "node-cron": "^4.6.0",
     "nodemailer": "^10.3.1",
+    "pdfkit": "^0.20.2",
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
