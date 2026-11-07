@@ -29,6 +29,7 @@ export const resourcePages = {
     api: api.pedidos,
     title: 'Pedidos',
     description: 'Pedidos y estado de procesamiento',
+    deleteWarning: 'También se eliminarán sus detalles y paquetes asociados.',
     fields: [
       { name: 'id_usuario', label: 'ID de usuario', type: 'number', min: 1, required: true, createOnly: true },
       { name: 'estado', label: 'Estado', type: 'select', options: ['pendiente', 'procesando', 'completado', 'cancelado'] },
@@ -112,6 +113,8 @@ export const resourcePages = {
     api: api.usuarios,
     title: 'Usuarios',
     description: 'Usuarios y roles del sistema',
+    deleteWarning: 'Se desactivará y no podrá iniciar sesión; su historial se conservará.',
+    deleteSuccessNotice: 'Usuario desactivado correctamente. Se conservó su historial.',
     fields: [
       { name: 'nombre', label: 'Nombre', type: 'text', required: true },
       { name: 'email', label: 'Correo electrónico', type: 'email', required: true },

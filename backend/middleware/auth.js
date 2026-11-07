@@ -2,20 +2,47 @@ const jwt = require('jsonwebtoken');
 const { Usuario } = require('../models');
 
 const JWT_SECRET = (process.env.JWT_SECRET || '').trim();
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
+const configuredExpiration = process.env.JWT_EXPIRES_IN || '1h';
 
 if (JWT_SECRET.length < 32) {
   throw new Error('JWT_SECRET debe tener al menos 32 caracteres en el archivo .env.');
 }
 
+function parseExpiration(value) {
+  if (/^\d+$/.test(value)) {
+    const seconds = Number(value);
+    if (!Number.isSafeInteger(seconds) || seconds < 1) {
+      throw new Error('JWT_EXPIRES_IN debe ser una duración positiva válida.');
+    }
+    return seconds;
+  }
+
+  try {
+    jwt.sign({ config: true }, JWT_SECRET, {
+      expiresIn: value,
+      algorithm: 'HS256',
+    });
+  } catch (error) {
+    throw new Error('JWT_EXPIRES_IN debe ser una duración válida, por ejemplo 1h o 3600.', {
+      cause: error,
+    });
+  }
+  return value;
+}
+
+const JWT_EXPIRES_IN = parseExpiration(configuredExpiration);
+
 function firmarToken(usuario) {
   const payload = { id: usuario.id, email: usuario.email, rol: usuario.rol };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+    algorithm: 'HS256',
+  });
 }
 
 function verificarToken(token) {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
   } catch (err) {
     return null;
   }
@@ -42,7 +69,7 @@ function autenticar(req, res, next) {
 
   Usuario.findByPk(payload.id)
     .then((usuario) => {
-      if (!usuario) {
+      if (!usuario || !usuario.activo) {
         return res.status(401).json({ error: 'Token inválido o expirado' });
       }
 

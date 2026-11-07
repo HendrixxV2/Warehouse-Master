@@ -137,10 +137,11 @@ export default function ResourcePage({ config }) {
   };
 
   const remove = async (row) => {
-    if (!window.confirm(`¿Eliminar el registro #${row.id}?`)) return;
+    const warning = config.deleteWarning ? ` ${config.deleteWarning}` : '';
+    if (!window.confirm(`¿Eliminar el registro #${row.id}?${warning}`)) return;
     try {
       await config.api.eliminar(row.id);
-      setNotice('Registro eliminado correctamente.');
+      setNotice(config.deleteSuccessNotice || 'Registro eliminado correctamente.');
       await load();
     } catch (deleteError) {
       setNotice(null);

@@ -18,6 +18,12 @@ function responderError(res, error) {
     return res.status(409).json({ error: 'Ya existe un registro con esos datos.' });
   }
   if (error instanceof ForeignKeyConstraintError) {
+    const code = error.parent?.code || error.original?.code;
+    if (code === 'ER_ROW_IS_REFERENCED_2') {
+      return res.status(409).json({
+        error: 'No se puede eliminar el registro porque tiene datos relacionados. Elimina o reasigna esos datos primero.',
+      });
+    }
     return res.status(409).json({
       error: 'La referencia no existe o el registro está relacionado con otros datos.',
     });

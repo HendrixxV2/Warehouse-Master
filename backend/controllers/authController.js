@@ -46,7 +46,7 @@ module.exports = {
       const { email, password } = req.body;
 
       const usuario = await Usuario.findOne({ where: { email } });
-      if (!usuario) {
+      if (!usuario || !usuario.activo) {
         return res.status(401).json({ error: 'Correo o contraseña incorrectos.' });
       }
 

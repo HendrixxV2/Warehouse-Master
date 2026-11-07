@@ -98,13 +98,15 @@ Crea el archivo local `.env` a partir de la plantilla:
 Copy-Item .env.example .env
 ```
 
-En `.env`, configura `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD` para tu instancia de MySQL. Genera un secreto JWT aleatorio con Node.js:
+En `.env`, configura `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD` para tu instancia de MySQL. Genera un secreto JWT criptográficamente aleatorio:
 
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```powershell
+npm run jwt:secret
 ```
 
-Copia el resultado en `JWT_SECRET` en `.env`; no lo compartas ni lo subas al repositorio. La API usa `JWT_EXPIRES_IN` (por defecto, `1h`) para firmar los tokens.
+Copia el resultado en `JWT_SECRET` en `.env`; debe ser el mismo en cada reinicio y no debes compartirlo ni subirlo al repositorio. Cambiarlo invalida todos los tokens que ya se emitieron: inicia sesión de nuevo para obtener uno firmado con el secreto actual. La API firma los tokens con HS256 y usa `JWT_EXPIRES_IN` (por defecto, `1h`); acepta duraciones como `1h` o segundos como `3600`.
+
+Al eliminar un pedido, también se eliminan sus detalles y paquetes asociados. Eliminar un usuario lo desactiva y conserva el historial relacionado; los usuarios desactivados no aparecen en la lista ni pueden iniciar sesión. Otras eliminaciones bloqueadas por datos relacionados indican que primero debes eliminar o reasignar esos registros.
 
 ### 5.3 Instalar, migrar y ejecutar
 
@@ -118,7 +120,7 @@ Las migraciones crean y actualizan las tablas conforme al código. Para cargar d
 
 ## 6. Verificación de autenticación con Postman
 
-1. Inicia sesión con `POST http://localhost:4000/api/auth/login`, encabezado `Content-Type: application/json` y cuerpo JSON:
+La interfaz web se abre en `http://localhost:3000`; el puerto `4000` corresponde a la API. Si la API responde **“Token inválido o expirado”**, vuelve a iniciar sesión y sustituye el token guardado por el nuevo. En Postman, obtén uno con `POST http://localhost:4000/api/auth/login`, encabezado `Content-Type: application/json` y cuerpo JSON:
 
    ```json
    {

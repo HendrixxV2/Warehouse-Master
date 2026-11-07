@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon backend/server.js",
     "start": "node backend/server.js",
+    "jwt:secret": "node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\"",
     "db:migrate": "sequelize-cli db:migrate",
     "seed:all": "sequelize-cli db:seed:all"
   },
