@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { Usuario } = require('../models');
 
 const JWT_SECRET = (process.env.JWT_SECRET || '').trim();
-const configuredExpiration = process.env.JWT_EXPIRES_IN || '1h';
+const configuredExpiration = process.env.JWT_EXPIRES_IN || '10m';
 
 if (JWT_SECRET.length < 32) {
   throw new Error('JWT_SECRET debe tener al menos 32 caracteres en el archivo .env.');
@@ -42,7 +42,10 @@ function firmarToken(usuario) {
 
 function verificarToken(token) {
   try {
-    return jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+    return jwt.verify(token, JWT_SECRET, {
+      algorithms: ['HS256'],
+      maxAge: JWT_EXPIRES_IN,
+    });
   } catch (err) {
     return null;
   }

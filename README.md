@@ -21,7 +21,7 @@ Warehouse Master es un mini-WMS que permite administrar el catálogo de producto
 
 - **CRUD completo** sobre 8 entidades relacionadas: usuarios, proveedores, categorías, almacenes, productos, movimientos de stock, pedidos y detalles de pedido.
 - **Validación obligatoria en backend**: toda petición pasa por un `validator` antes de llegar al controller. Las peticiones inválidas devuelven `400` con un array `errores[]` y **no tocan la base de datos**.
-- **Sesiones JWT persistentes**: la sesión se conserva al recargar la aplicación y, por defecto, expira una hora después de iniciar sesión.
+- **Sesiones JWT persistentes**: la sesión se conserva al recargar la aplicación y expira 10 minutos después de iniciar sesión.
 - **Control de stock transaccional**: crear un movimiento de `entrada` incrementa `productos.stock_actual`; uno de `salida` lo decrementa. Si el stock resultante sería negativo, la operación hace `rollback` y responde `400`.
 - **Dashboard ejecutivo** con 4 KPIs (total de productos, stock total, pedidos pendientes, productos con stock bajo), feed de actividad reciente y alertas de stock.
 - **Interfaz React** con sidebar fija oscura, tema claro/oscuro persistido, y componentes reutilizables (tabla, modal, badges, tarjetas de KPI).
@@ -104,7 +104,7 @@ En `.env`, configura `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD` 
 npm run jwt:secret
 ```
 
-Copia el resultado en `JWT_SECRET` en `.env`; debe ser el mismo en cada reinicio y no debes compartirlo ni subirlo al repositorio. Cambiarlo invalida todos los tokens que ya se emitieron: inicia sesión de nuevo para obtener uno firmado con el secreto actual. La API firma los tokens con HS256 y usa `JWT_EXPIRES_IN` (por defecto, `1h`); acepta duraciones como `1h` o segundos como `3600`.
+Copia el resultado en `JWT_SECRET` en `.env`; debe ser el mismo en cada reinicio y no debes compartirlo ni subirlo al repositorio. Cambiarlo invalida todos los tokens que ya se emitieron: inicia sesión de nuevo para obtener uno firmado con el secreto actual. La API firma los tokens con HS256 y usa `JWT_EXPIRES_IN` (por defecto, `10m`); acepta duraciones como `10m` o segundos como `600`. Al expirar la sesión, inicia sesión de nuevo para obtener un token nuevo.
 
 Al eliminar un pedido, también se eliminan sus detalles y paquetes asociados. Eliminar un usuario lo desactiva y conserva el historial relacionado; los usuarios desactivados no aparecen en la lista ni pueden iniciar sesión. Otras eliminaciones bloqueadas por datos relacionados indican que primero debes eliminar o reasignar esos registros.
 
@@ -120,7 +120,7 @@ Las migraciones crean y actualizan las tablas conforme al código. Para cargar d
 
 ## 6. Verificación de autenticación con Postman
 
-La interfaz web se abre en `http://localhost:3000`; el puerto `4000` corresponde a la API. Si la API responde **“Token inválido o expirado”**, vuelve a iniciar sesión y sustituye el token guardado por el nuevo. En Postman, obtén uno con `POST http://localhost:4000/api/auth/login`, encabezado `Content-Type: application/json` y cuerpo JSON:
+La interfaz web se abre en `http://localhost:3000`; el puerto `4000` corresponde a la API. Los tokens expiran a los 10 minutos; si la API responde **“Token inválido o expirado”**, vuelve a iniciar sesión y sustituye el token guardado por el nuevo. En Postman, obtén uno con `POST http://localhost:4000/api/auth/login`, encabezado `Content-Type: application/json` y cuerpo JSON:
 
    ```json
    {
