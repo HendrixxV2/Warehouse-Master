@@ -48,11 +48,9 @@ const SECTIONS = [
   {
     title: 'Personas y control',
     links: [
-      { to: '/usuarios', icon: Users, label: 'Usuarios' },
       { to: '/transportistas', icon: Truck, label: 'Transportistas' },
       { to: '/turnos', icon: CalendarDays, label: 'Turnos' },
       { to: '/incidencias', icon: BellRing, label: 'Incidencias' },
-      { to: '/permisos', icon: ShieldCheck, label: 'Permisos' },
     ],
   },
 ];

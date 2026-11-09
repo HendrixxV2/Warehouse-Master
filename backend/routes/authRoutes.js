@@ -10,7 +10,8 @@ const router = express.Router();
 
 router.post('/register', validarRegistro, ctrl.registro);
 router.post('/registro', validarRegistro, ctrl.registro);
-router.post('/login', validarLogin, ctrl.login);
+router.post('/login', validarLogin, ctrl.loginUsuario);
+router.post('/admin/login', validarLogin, ctrl.loginAdmin);
 router.get('/me', autenticar, ctrl.me);
 
 module.exports = router;

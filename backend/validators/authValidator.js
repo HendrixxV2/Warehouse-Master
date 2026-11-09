@@ -4,7 +4,6 @@ const camposRegistro = {
   nombre: reglas.texto(150),
   email: reglas.email,
   password: reglas.password,
-  rol: reglas.opcion(['admin', 'supervisor', 'operador']),
 };
 
 const camposLogin = {

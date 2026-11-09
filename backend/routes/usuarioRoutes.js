@@ -5,8 +5,10 @@ const {
   validarCrearUsuario,
   validarActualizarUsuario,
 } = require('../validators/usuarioValidator');
+const { autorizar } = require('../middleware/auth');
 
 const router = express.Router();
+router.use(autorizar('admin'));
 router.param('id', validarId);
 router.get('/', ctrl.listar);
 router.get('/:id', ctrl.obtener);

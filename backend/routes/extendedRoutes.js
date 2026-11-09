@@ -1,6 +1,7 @@
 const express = require('express');
 const { validarId } = require('../validators/common');
 const { crearControladorRecurso } = require('../controllers/resourceController');
+const { autorizar } = require('../middleware/auth');
 const {
   Cliente,
   Transportista,
@@ -54,6 +55,6 @@ router.use('/contratos', crearRutaRecurso(Contrato, ['numero', 'id_proveedor', '
 router.use('/inventario-critico', crearRutaRecurso(InventarioCritico, ['id_producto', 'umbral_minimo', 'stock_actual', 'prioridad', 'estado']));
 router.use('/pedidos-internos', crearRutaRecurso(PedidoInterno, ['codigo', 'id_almacen_origen', 'id_almacen_destino', 'estado', 'total']));
 router.use('/costos', crearRutaRecurso(Costo, ['concepto', 'monto', 'id_almacen', 'id_producto', 'periodo']));
-router.use('/permisos', crearRutaRecurso(Permiso, ['nombre', 'modulo', 'rol', 'activo']));
+router.use('/permisos', autorizar('admin'), crearRutaRecurso(Permiso, ['nombre', 'modulo', 'rol', 'activo']));
 
 module.exports = router;

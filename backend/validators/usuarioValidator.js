@@ -7,6 +7,9 @@ const campos = {
 };
 
 module.exports = {
-  validarCrearUsuario: crearValidador({ required: ['nombre', 'email'], fields: campos }),
+  validarCrearUsuario: crearValidador({
+    required: ['nombre', 'email', 'password'],
+    fields: { ...campos, password: reglas.password },
+  }),
   validarActualizarUsuario: crearValidador({ fields: campos }),
 };

@@ -1,11 +1,28 @@
 const { Usuario } = require('../models');
 const { crearControladorRecurso, responderError } = require('./resourceController');
+const bcrypt = require('bcryptjs');
 
 const campos = ['nombre', 'email', 'rol'];
+const SALT_ROUNDS = 10;
 const controlador = crearControladorRecurso({
   model: Usuario,
   fields: campos,
 });
+
+controlador.crear = async (req, res) => {
+  try {
+    const password = await bcrypt.hash(req.body.password, SALT_ROUNDS);
+    const usuario = await Usuario.create({
+      nombre: req.body.nombre,
+      email: req.body.email,
+      rol: req.body.rol,
+      password,
+    });
+    return res.status(201).json(usuario);
+  } catch (error) {
+    return responderError(res, error);
+  }
+};
 
 controlador.listar = async (_req, res) => {
   try {

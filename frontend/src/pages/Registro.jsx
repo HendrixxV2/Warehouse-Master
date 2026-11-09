@@ -1,19 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, Shield, AlertCircle } from 'lucide-react';
+import { UserPlus, Mail, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import Button from '../ui/Button';
 import Field, { Input } from '../ui/Field';
 
-const ROLES = [
-  { value: 'operador', label: 'Operador' },
-  { value: 'supervisor', label: 'Supervisor' },
-  { value: 'admin', label: 'Administrador' },
-];
-
 export default function Registro() {
-  const [form, setForm] = useState({ nombre: '', email: '', password: '', rol: 'operador' });
+  const [form, setForm] = useState({ nombre: '', email: '', password: '' });
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const { login } = useAuth();
@@ -28,7 +22,6 @@ export default function Registro() {
         nombre: form.nombre.trim(),
         email: form.email.trim(),
         password: form.password,
-        rol: form.rol,
       });
       const token = data.token;
       const usuario = data.usuario || {
@@ -56,7 +49,7 @@ export default function Registro() {
               <h2 className="text-[20px] font-semibold text-fg">Crear cuenta</h2>
             </div>
             <p className="text-[13px] text-fg-muted">
-              Regístrate como usuario del almacén. Tu rol inicial lo define el administrador.
+              Regístrate como usuario del almacén.               Las cuentas nuevas se crean con acceso de operario.
             </p>
           </div>
 
@@ -96,20 +89,6 @@ export default function Registro() {
                 required
               />
               <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-faint" />
-            </Field>
-            <Field label="Rol">
-              <select
-                value={form.rol}
-                onChange={(e) => setForm({ ...form, rol: e.target.value })}
-                className="w-full h-9 pl-9 pr-3 rounded-lg bg-base border border-line text-[13px] text-fg focus-ring"
-              >
-                {ROLES.map((r) => (
-                  <option key={r.value} value={r.value}>
-                    {r.label}
-                  </option>
-                ))}
-              </select>
-              <Shield size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-faint" />
             </Field>
             <Button type="submit" disabled={saving} className="w-full">
               {saving ? 'Creando cuenta…' : 'Crear cuenta'}

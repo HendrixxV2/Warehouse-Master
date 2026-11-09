@@ -25,6 +25,8 @@ Warehouse Master es un mini-WMS que permite administrar el catálogo de producto
 - **Control de stock transaccional**: crear un movimiento de `entrada` incrementa `productos.stock_actual`; uno de `salida` lo decrementa. Si el stock resultante sería negativo, la operación hace `rollback` y responde `400`.
 - **Dashboard ejecutivo** con 4 KPIs (total de productos, stock total, pedidos pendientes, productos con stock bajo), feed de actividad reciente y alertas de stock.
 - **Interfaz React** con sidebar fija oscura, tema claro/oscuro persistido, y componentes reutilizables (tabla, modal, badges, tarjetas de KPI).
+- **Paneles por rol**: supervisores y operarios usan el panel operativo; administración tiene acceso separado en `/admin/login` y gestiona usuarios y permisos en `/admin`.
+- **Acceso protegido**: solo administradores pueden usar los endpoints de usuarios y permisos; el registro público crea cuentas de operario.
 
 ---
 

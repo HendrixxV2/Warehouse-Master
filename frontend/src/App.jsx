@@ -1,7 +1,8 @@
-// src/App.jsx
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import AppShell from './layout/AppShell';
+import AdminShell from './layout/AdminShell';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import Productos from './pages/Productos';
 import ResourcePage from './pages/ResourcePage';
 import Login from './pages/Login';
@@ -13,12 +14,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rutas públicas (no requieren sesión) */}
         <Route path="/login" element={<Login />} />
+        <Route path="/admin/login" element={<Login admin />} />
         <Route path="/registro" element={<Registro />} />
 
-        {/* Rutas privadas (requieren sesión iniciada) */}
-        <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
+        <Route element={<ProtectedRoute allowedRoles={['supervisor', 'operador']}><AppShell /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="productos" element={<Productos />} />
           <Route path="movimientos" element={<ResourcePage config={resourcePages.movimientos} />} />
@@ -27,7 +27,6 @@ export default function App() {
           <Route path="proveedores" element={<ResourcePage config={resourcePages.proveedores} />} />
           <Route path="categorias" element={<ResourcePage config={resourcePages.categorias} />} />
           <Route path="almacenes" element={<ResourcePage config={resourcePages.almacenes} />} />
-          <Route path="usuarios" element={<ResourcePage config={resourcePages.usuarios} />} />
           <Route path="clientes" element={<ResourcePage config={resourcePages.clientes} />} />
           <Route path="transportistas" element={<ResourcePage config={resourcePages.transportistas} />} />
           <Route path="ordenes-compra" element={<ResourcePage config={resourcePages.ordenesCompra} />} />
@@ -44,17 +43,18 @@ export default function App() {
           <Route path="inventario-critico" element={<ResourcePage config={resourcePages.inventarioCritico} />} />
           <Route path="pedidos-internos" element={<ResourcePage config={resourcePages.pedidosInternos} />} />
           <Route path="costos" element={<ResourcePage config={resourcePages.costos} />} />
-          <Route path="permisos" element={<ResourcePage config={resourcePages.permisos} />} />
-          <Route
-            path="*"
-            element={
-              <div className="space-y-2">
-                <h2 className="text-[22px] font-semibold text-fg">Sección no encontrada</h2>
-                <Link to="/" className="text-[13px] text-accent hover:text-accent-hover">Volver al dashboard</Link>
-              </div>
-            }
-          />
         </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['admin']}><AdminShell /></ProtectedRoute>}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/usuarios" element={<ResourcePage config={resourcePages.usuarios} />} />
+          <Route path="/admin/permisos" element={<ResourcePage config={resourcePages.permisos} />} />
+        </Route>
+
+        <Route path="*" element={<ProtectedRoute><div className="space-y-2">
+          <h2 className="text-[22px] font-semibold text-fg">Sección no encontrada</h2>
+          <Link to="/" className="text-[13px] text-accent hover:text-accent-hover">Volver al dashboard</Link>
+        </div></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

@@ -118,6 +118,7 @@ export const resourcePages = {
     fields: [
       { name: 'nombre', label: 'Nombre', type: 'text', required: true },
       { name: 'email', label: 'Correo electrónico', type: 'email', required: true },
+      { name: 'password', label: 'Contraseña inicial', type: 'password', required: true, createOnly: true },
       { name: 'rol', label: 'Rol', type: 'select', options: ['admin', 'supervisor', 'operador'], defaultValue: 'operador' },
     ],
     columns: [
