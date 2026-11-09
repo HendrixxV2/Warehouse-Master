@@ -3,6 +3,9 @@ import { api } from '../services/api';
 const formatDate = (value) => (
   value ? new Date(value).toLocaleString('es-MX') : '—'
 );
+const MANAGEMENT_ROLES = ['admin', 'supervisor'];
+const SUPERVISOR_ONLY = ['supervisor'];
+const OPERATIONS_ROLES = ['supervisor', 'operador'];
 
 export const resourcePages = {
   movimientos: {
@@ -12,9 +15,9 @@ export const resourcePages = {
     fields: [
       { name: 'tipo', label: 'Tipo', type: 'select', required: true, options: ['entrada', 'salida'] },
       { name: 'cantidad', label: 'Cantidad', type: 'number', min: 1, required: true },
-      { name: 'id_usuario', label: 'ID de usuario', type: 'number', min: 1, required: true, createOnly: true },
+      { name: 'id_usuario', label: 'ID de usuario', type: 'number', min: 1, required: true, createOnly: true, hiddenRoles: ['operador'] },
       { name: 'id_producto', label: 'ID de producto', type: 'number', min: 1, required: true, createOnly: true },
-      { name: 'fecha', label: 'Fecha', type: 'datetime-local' },
+      { name: 'fecha', label: 'Fecha', type: 'datetime-local', hiddenRoles: ['operador'] },
     ],
     columns: [
       { key: 'id', label: 'ID', mono: true },
@@ -24,6 +27,7 @@ export const resourcePages = {
       { key: 'id_usuario', label: 'Usuario', align: 'right', mono: true },
       { key: 'fecha', label: 'Fecha', render: formatDate },
     ],
+    access: { create: OPERATIONS_ROLES, update: SUPERVISOR_ONLY, delete: SUPERVISOR_ONLY },
   },
   pedidos: {
     api: api.pedidos,
@@ -33,15 +37,16 @@ export const resourcePages = {
     fields: [
       { name: 'id_usuario', label: 'ID de usuario', type: 'number', min: 1, required: true, createOnly: true },
       { name: 'estado', label: 'Estado', type: 'select', options: ['pendiente', 'procesando', 'completado', 'cancelado'] },
-      { name: 'fecha', label: 'Fecha', type: 'datetime-local' },
+      { name: 'fecha', label: 'Fecha', type: 'datetime-local', hiddenRoles: ['operador'] },
     ],
     columns: [
       { key: 'id', label: 'ID', mono: true },
       { key: 'estado', label: 'Estado' },
-      { key: 'total', label: 'Total', align: 'right', mono: true, render: (value) => `$${Number(value || 0).toFixed(2)}` },
+      { key: 'total', label: 'Total', align: 'right', mono: true, hiddenRoles: ['operador'], render: (value) => `$${Number(value || 0).toFixed(2)}` },
       { key: 'id_usuario', label: 'Usuario', align: 'right', mono: true },
       { key: 'fecha', label: 'Fecha', render: formatDate },
     ],
+    access: { create: SUPERVISOR_ONLY, update: OPERATIONS_ROLES, delete: SUPERVISOR_ONLY },
   },
   detalles: {
     api: api.detalles,
@@ -57,9 +62,10 @@ export const resourcePages = {
       { key: 'id_pedido', label: 'Pedido', align: 'right', mono: true },
       { key: 'id_producto', label: 'Producto', align: 'right', mono: true },
       { key: 'cantidad', label: 'Cantidad', align: 'right', mono: true },
-      { key: 'precio_unitario', label: 'Precio unitario', align: 'right', mono: true, render: (value) => `$${Number(value || 0).toFixed(2)}` },
-      { key: 'subtotal', label: 'Subtotal', align: 'right', mono: true, render: (value) => `$${Number(value || 0).toFixed(2)}` },
+      { key: 'precio_unitario', label: 'Precio unitario', align: 'right', mono: true, hiddenRoles: ['operador'], render: (value) => `$${Number(value || 0).toFixed(2)}` },
+      { key: 'subtotal', label: 'Subtotal', align: 'right', mono: true, hiddenRoles: ['operador'], render: (value) => `$${Number(value || 0).toFixed(2)}` },
     ],
+    access: { create: SUPERVISOR_ONLY, update: OPERATIONS_ROLES, delete: SUPERVISOR_ONLY },
   },
   proveedores: {
     api: api.proveedores,
@@ -78,6 +84,7 @@ export const resourcePages = {
       { key: 'telefono', label: 'Teléfono' },
       { key: 'direccion', label: 'Dirección' },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   categorias: {
     api: api.categorias,
@@ -92,6 +99,7 @@ export const resourcePages = {
       { key: 'nombre', label: 'Categoría' },
       { key: 'descripcion', label: 'Descripción' },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   almacenes: {
     api: api.almacenes,
@@ -108,6 +116,7 @@ export const resourcePages = {
       { key: 'ubicacion', label: 'Ubicación' },
       { key: 'capacidad', label: 'Capacidad', align: 'right', mono: true },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   usuarios: {
     api: api.usuarios,
@@ -148,6 +157,7 @@ export const resourcePages = {
       { key: 'tipo', label: 'Tipo' },
       { key: 'activo', label: 'Activo' },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   transportistas: {
     api: api.transportistas,
@@ -167,6 +177,7 @@ export const resourcePages = {
       { key: 'telefono', label: 'Teléfono' },
       { key: 'estado', label: 'Estado' },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   ordenesCompra: {
     api: api.ordenesCompra,
@@ -186,16 +197,17 @@ export const resourcePages = {
       { key: 'estado', label: 'Estado' },
       { key: 'total', label: 'Total', align: 'right', mono: true, render: (value) => `$${Number(value || 0).toFixed(2)}` },
     ],
+    access: { create: SUPERVISOR_ONLY, update: SUPERVISOR_ONLY, delete: SUPERVISOR_ONLY },
   },
   recepciones: {
     api: api.recepciones,
     title: 'Recepciones',
     description: 'Control de material recibido en almacén',
     fields: [
-      { name: 'codigo', label: 'Código', type: 'text', required: true },
-      { name: 'fecha', label: 'Fecha', type: 'datetime-local' },
-      { name: 'id_almacen', label: 'Almacén', type: 'number', min: 1, required: true },
-      { name: 'id_proveedor', label: 'Proveedor', type: 'number', min: 1, required: true },
+      { name: 'codigo', label: 'Código', type: 'text', required: true, hiddenOnEditRoles: ['operador'] },
+      { name: 'fecha', label: 'Fecha', type: 'datetime-local', hiddenOnEditRoles: ['operador'] },
+      { name: 'id_almacen', label: 'Almacén', type: 'number', min: 1, required: true, hiddenOnEditRoles: ['operador'] },
+      { name: 'id_proveedor', label: 'Proveedor', type: 'number', min: 1, required: true, hiddenOnEditRoles: ['operador'] },
       { name: 'estado', label: 'Estado', type: 'select', options: ['en_espera', 'recibido', 'revisado'], defaultValue: 'en_espera' },
       { name: 'observacion', label: 'Observación', type: 'textarea' },
     ],
@@ -206,6 +218,7 @@ export const resourcePages = {
       { key: 'id_proveedor', label: 'Proveedor', align: 'right', mono: true },
       { key: 'estado', label: 'Estado' },
     ],
+    access: { create: OPERATIONS_ROLES, update: OPERATIONS_ROLES, delete: SUPERVISOR_ONLY },
   },
   ubicaciones: {
     api: api.ubicaciones,
@@ -227,6 +240,7 @@ export const resourcePages = {
       { key: 'estanteria', label: 'Estantería' },
       { key: 'capacidad', label: 'Capacidad', align: 'right', mono: true },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   lotes: {
     api: api.lotes,
@@ -246,6 +260,7 @@ export const resourcePages = {
       { key: 'cantidad', label: 'Cantidad', align: 'right', mono: true },
       { key: 'estado', label: 'Estado' },
     ],
+    access: { create: MANAGEMENT_ROLES, update: MANAGEMENT_ROLES, delete: ['admin'] },
   },
   auditorias: {
     api: api.auditorias,
@@ -265,6 +280,7 @@ export const resourcePages = {
       { key: 'id_almacen', label: 'Almacén', align: 'right', mono: true },
       { key: 'fecha', label: 'Fecha', render: formatDate },
     ],
+    access: { create: ['admin'], update: [], delete: [] },
   },
   incidencias: {
     api: api.incidencias,
@@ -275,7 +291,7 @@ export const resourcePages = {
       { name: 'descripcion', label: 'Descripción', type: 'textarea' },
       { name: 'severidad', label: 'Severidad', type: 'select', options: ['baja', 'media', 'alta', 'critica'], defaultValue: 'media' },
       { name: 'estado', label: 'Estado', type: 'select', options: ['abierta', 'en_proceso', 'cerrada'], defaultValue: 'abierta' },
-      { name: 'id_usuario', label: 'Usuario', type: 'number', min: 1, required: true },
+      { name: 'id_usuario', label: 'Usuario', type: 'number', min: 1, required: true, hiddenRoles: ['operador'] },
     ],
     columns: [
       { key: 'id', label: 'ID', mono: true },
@@ -284,6 +300,7 @@ export const resourcePages = {
       { key: 'estado', label: 'Estado' },
       { key: 'id_usuario', label: 'Usuario', align: 'right', mono: true },
     ],
+    access: { read: MANAGEMENT_ROLES, create: OPERATIONS_ROLES, update: SUPERVISOR_ONLY, delete: SUPERVISOR_ONLY },
   },
   turnos: {
     api: api.turnos,
@@ -303,18 +320,19 @@ export const resourcePages = {
       { key: 'estado', label: 'Estado' },
       { key: 'fecha_inicio', label: 'Inicio', render: formatDate },
     ],
+    access: { create: SUPERVISOR_ONLY, update: SUPERVISOR_ONLY, delete: SUPERVISOR_ONLY },
   },
   paquetes: {
     api: api.paquetes,
     title: 'Paquetes',
     description: 'Seguimiento de entregas y transportes',
     fields: [
-      { name: 'codigo', label: 'Código', type: 'text', required: true },
-      { name: 'id_pedido', label: 'Pedido', type: 'number', min: 1, required: true },
-      { name: 'id_transportista', label: 'Transportista', type: 'number', min: 1 },
+      { name: 'codigo', label: 'Código', type: 'text', required: true, hiddenOnEditRoles: ['operador'] },
+      { name: 'id_pedido', label: 'Pedido', type: 'number', min: 1, required: true, hiddenOnEditRoles: ['operador'] },
+      { name: 'id_transportista', label: 'Transportista', type: 'number', min: 1, hiddenOnEditRoles: ['operador'] },
       { name: 'peso', label: 'Peso', type: 'number', min: 0 },
       { name: 'estado', label: 'Estado', type: 'select', options: ['preparado', 'en_transito', 'entregado'], defaultValue: 'preparado' },
-      { name: 'destino', label: 'Destino', type: 'text' },
+      { name: 'destino', label: 'Destino', type: 'text', hiddenOnEditRoles: ['operador'] },
     ],
     columns: [
       { key: 'id', label: 'ID', mono: true },
@@ -323,6 +341,7 @@ export const resourcePages = {
       { key: 'estado', label: 'Estado' },
       { key: 'destino', label: 'Destino' },
     ],
+    access: { create: OPERATIONS_ROLES, update: OPERATIONS_ROLES, delete: SUPERVISOR_ONLY },
   },
   etiquetas: {
     api: api.etiquetas,
@@ -341,6 +360,7 @@ export const resourcePages = {
       { key: 'id_producto', label: 'Producto', align: 'right', mono: true },
       { key: 'id_almacen', label: 'Almacén', align: 'right', mono: true },
     ],
+    access: { create: MANAGEMENT_ROLES, update: MANAGEMENT_ROLES, delete: ['admin'] },
   },
   tarifas: {
     api: api.tarifas,
@@ -379,6 +399,7 @@ export const resourcePages = {
       { key: 'id_almacen', label: 'Almacén', align: 'right', mono: true },
       { key: 'estado', label: 'Estado' },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   inventarioCritico: {
     api: api.inventarioCritico,
@@ -398,6 +419,7 @@ export const resourcePages = {
       { key: 'umbral_minimo', label: 'Mínimo', align: 'right', mono: true },
       { key: 'prioridad', label: 'Prioridad' },
     ],
+    access: { create: MANAGEMENT_ROLES, update: MANAGEMENT_ROLES, delete: ['admin'] },
   },
   pedidosInternos: {
     api: api.pedidosInternos,
@@ -435,6 +457,7 @@ export const resourcePages = {
       { key: 'monto', label: 'Monto', align: 'right', mono: true, render: (value) => `$${Number(value || 0).toFixed(2)}` },
       { key: 'periodo', label: 'Período' },
     ],
+    access: { create: ['admin'], update: ['admin'], delete: ['admin'] },
   },
   permisos: {
     api: api.permisos,

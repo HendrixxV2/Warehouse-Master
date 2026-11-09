@@ -33,14 +33,14 @@ export default function DataTable({
                       <div className="h-3 rounded bg-subtle animate-pulse" />
                     </td>
                   ))}
-                  <td />
+                  {(onEdit || onDelete) && <td />}
                 </tr>
               ))
             )}
 
             {!loading && rows.length === 0 && (
               <tr>
-                <td colSpan={columns.length + 1} className="px-4 py-16 text-center text-fg-muted">
+                <td colSpan={columns.length + (onEdit || onDelete ? 1 : 0)} className="px-4 py-16 text-center text-fg-muted">
                   <p className="text-[13px]">{emptyLabel}</p>
                 </td>
               </tr>

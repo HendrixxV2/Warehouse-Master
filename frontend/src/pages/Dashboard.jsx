@@ -94,17 +94,45 @@ function TrendChart({ days }) {
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+  const [updatedAt, setUpdatedAt] = useState(null);
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    api.dashboard.resumen().then(setData).catch(() => {
-      setData({
-        totalProductos: 128, stockTotal: 4820, stockBajo: 6, pedidosPendientes: 12,
-        movimientosRecientes: [], productosBajos: [],
-      });
-    });
-  }, []);
+    let active = true;
+    const load = async () => {
+      try {
+        const summary = await api.dashboard.resumen();
+        if (!active) return;
+        setData(summary);
+        setUpdatedAt(new Date());
+        setError('');
+      } catch (loadError) {
+        if (active) setError(loadError.message);
+      }
+    };
+
+    load();
+    const interval = window.setInterval(load, 30_000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [retry]);
 
   if (!data) {
+    if (error) {
+      return (
+        <section className="space-y-3">
+          <h2 className="text-[22px] font-semibold text-fg">No se pudo cargar el dashboard</h2>
+          <p role="alert" className="text-[13px] text-danger">{error}</p>
+          <button type="button" onClick={() => setRetry((value) => value + 1)} className="text-[13px] font-medium text-accent hover:text-accent-hover">
+            Intentar de nuevo
+          </button>
+        </section>
+      );
+    }
+
     return (
       <div className="space-y-6" aria-label="Cargando resumen del almacén">
         <div className="h-14 rounded-xl bg-elevated border border-line animate-pulse" />
@@ -126,11 +154,15 @@ export default function Dashboard() {
           <p className="text-[10px] uppercase tracking-[0.16em] font-semibold text-accent mb-1">Centro de control</p>
           <h2 className="text-[22px] font-semibold text-fg tracking-tight">Resumen del almacén</h2>
           <p className="text-[13px] text-fg-muted mt-1">
-            Inventario y operación · actualizado hace <span className="mono">1 min</span>
+            Inventario y operación · actualizado {updatedAt?.toLocaleTimeString('es-MX') || '—'} · refresco cada 30 s
           </p>
         </div>
-        <Badge tone="success">● Sistema operativo</Badge>
+        <Badge tone={error ? 'warning' : 'success'}>
+          {error ? 'Datos desactualizados' : '● Sistema operativo'}
+        </Badge>
       </div>
+
+      {error && <p role="alert" className="text-[13px] text-danger">No se pudo actualizar el dashboard: {error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Productos" value={data.totalProductos} icon={Package} tone="accent" to="/productos" />

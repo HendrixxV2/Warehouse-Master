@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart, Boxes,
   Truck, Tags, Warehouse, Users, LogOut,
   MapPin, ClipboardList, FileText, CalendarDays, BellRing,
-  ShieldCheck, CircleDollarSign, PackageCheck, Building2,
+  PackageCheck, Building2,
   ChevronDown, ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -17,9 +17,9 @@ const SECTIONS = [
       { to: '/movimientos', icon: ArrowLeftRight, label: 'Movimientos' },
       { to: '/pedidos', icon: ShoppingCart, label: 'Pedidos' },
       { to: '/detalles', icon: Boxes, label: 'Detalles' },
-      { to: '/clientes', icon: Users, label: 'Clientes' },
       { to: '/paquetes', icon: PackageCheck, label: 'Paquetes' },
-      { to: '/pedidos-internos', icon: ClipboardList, label: 'Pedidos internos' },
+      { to: '/clientes', icon: Users, label: 'Clientes', roles: ['supervisor'] },
+      { to: '/pedidos-internos', icon: ClipboardList, label: 'Pedidos internos', roles: ['supervisor'] },
     ],
   },
   {
@@ -27,33 +27,34 @@ const SECTIONS = [
     links: [
       { to: '/almacenes', icon: Warehouse, label: 'Almacenes' },
       { to: '/ubicaciones', icon: MapPin, label: 'Ubicaciones' },
-      { to: '/lotes', icon: FileText, label: 'Lotes' },
+      { to: '/lotes', icon: FileText, label: 'Lotes', roles: ['supervisor'] },
       { to: '/inventario-critico', icon: BellRing, label: 'Inventario crítico' },
-      { to: '/etiquetas', icon: Tags, label: 'Etiquetas' },
-      { to: '/auditorias', icon: ShieldCheck, label: 'Auditorías' },
+      { to: '/etiquetas', icon: Tags, label: 'Etiquetas', roles: ['supervisor'] },
     ],
   },
   {
     title: 'Compras y costos',
     links: [
-      { to: '/proveedores', icon: Truck, label: 'Proveedores' },
-      { to: '/categorias', icon: Tags, label: 'Categorías' },
-      { to: '/ordenes-compra', icon: ClipboardList, label: 'Órdenes de compra' },
+      { to: '/proveedores', icon: Truck, label: 'Proveedores', roles: ['supervisor'] },
+      { to: '/categorias', icon: Tags, label: 'Categorías', roles: ['supervisor'] },
+      { to: '/ordenes-compra', icon: ClipboardList, label: 'Órdenes de compra', roles: ['supervisor'] },
       { to: '/recepciones', icon: Building2, label: 'Recepciones' },
-      { to: '/contratos', icon: FileText, label: 'Contratos' },
-      { to: '/tarifas', icon: CircleDollarSign, label: 'Tarifas' },
-      { to: '/costos', icon: CircleDollarSign, label: 'Costos' },
     ],
   },
   {
     title: 'Personas y control',
     links: [
-      { to: '/transportistas', icon: Truck, label: 'Transportistas' },
-      { to: '/turnos', icon: CalendarDays, label: 'Turnos' },
+      { to: '/transportistas', icon: Truck, label: 'Transportistas', roles: ['supervisor'] },
+      { to: '/turnos', icon: CalendarDays, label: 'Turnos', roles: ['supervisor'] },
       { to: '/incidencias', icon: BellRing, label: 'Incidencias' },
     ],
   },
 ];
+const ROLE_LABELS = {
+  admin: 'Administrador',
+  supervisor: 'Supervisor',
+  operador: 'Operario',
+};
 
 function getActiveSection(pathname) {
   return SECTIONS.find((section) =>
@@ -90,6 +91,12 @@ export default function Sidebar() {
   const { pathname } = useLocation();
   const activeSection = getActiveSection(pathname);
   const [expandedSection, setExpandedSection] = useState(activeSection);
+  const visibleSections = SECTIONS
+    .map((section) => ({
+      ...section,
+      links: section.links.filter(({ roles }) => !roles || roles.includes(user?.rol)),
+    }))
+    .filter(({ links }) => links.length > 0);
 
   useEffect(() => {
     if (activeSection) setExpandedSection(activeSection);
@@ -115,10 +122,10 @@ export default function Sidebar() {
       </div>
 
       <nav aria-label="Navegación principal" className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
-        <NavigationLink to="/" icon={LayoutDashboard} label="Dashboard" />
+        {user?.rol === 'supervisor' && <NavigationLink to="/" icon={LayoutDashboard} label="Dashboard" />}
 
         <div className="pt-2 space-y-1">
-          {SECTIONS.map(({ title, links }) => {
+          {visibleSections.map(({ title, links }) => {
             const isExpanded = expandedSection === title;
             const isActive = activeSection === title;
             const sectionId = `sidebar-section-${title.replace(/\s+/g, '-').toLowerCase()}`;
@@ -164,7 +171,7 @@ export default function Sidebar() {
               {user?.nombre || 'Usuario'}
             </p>
             <p className="text-[11px] text-sidebar-text truncate capitalize">
-              {user?.rol || '—'} · sesión activa
+              {ROLE_LABELS[user?.rol] || user?.rol || '—'} · sesión activa
             </p>
           </div>
           <LogOut size={14} className="text-sidebar-text/60 transition ml-2" />

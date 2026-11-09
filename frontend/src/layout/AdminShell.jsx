@@ -1,11 +1,22 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Shield, Users } from 'lucide-react';
+import {
+  LayoutDashboard, LogOut, Shield, Users, Package, Truck, Tags,
+  Warehouse, ClipboardCheck, FileText, CircleDollarSign,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const LINKS = [
   { to: '/admin', label: 'Panel', icon: LayoutDashboard, end: true },
   { to: '/admin/usuarios', label: 'Usuarios', icon: Users },
-  { to: '/admin/permisos', label: 'Permisos', icon: Shield },
+  { to: '/admin/permisos', label: 'Matriz de roles', icon: Shield },
+  { to: '/admin/auditorias', label: 'Auditoría', icon: ClipboardCheck },
+  { to: '/admin/productos', label: 'Productos maestros', icon: Package },
+  { to: '/admin/proveedores', label: 'Proveedores', icon: Truck },
+  { to: '/admin/categorias', label: 'Categorías', icon: Tags },
+  { to: '/admin/almacenes', label: 'Almacenes', icon: Warehouse },
+  { to: '/admin/contratos', label: 'Contratos', icon: FileText },
+  { to: '/admin/tarifas', label: 'Tarifas', icon: CircleDollarSign },
+  { to: '/admin/costos', label: 'Costos', icon: CircleDollarSign },
 ];
 
 export default function AdminShell() {
@@ -32,7 +43,7 @@ export default function AdminShell() {
           </div>
         </div>
 
-        <nav aria-label="Navegación de administración" className="flex-1 py-3 px-3 space-y-1">
+        <nav aria-label="Navegación de administración" className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
           {LINKS.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
@@ -77,7 +88,7 @@ export default function AdminShell() {
         <header className="h-16 px-8 flex items-center bg-base/60 backdrop-blur border-b border-line sticky top-0 z-20">
           <div>
             <h1 className="text-[15px] font-semibold text-fg leading-tight">Panel de administración</h1>
-            <p className="text-[12px] text-fg-muted">Gestión de usuarios y permisos</p>
+            <p className="text-[12px] text-fg-muted">Seguridad, configuración y datos maestros</p>
           </div>
         </header>
         <main className="flex-1 px-8 py-8">

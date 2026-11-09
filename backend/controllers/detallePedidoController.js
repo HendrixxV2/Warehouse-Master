@@ -10,10 +10,21 @@ const include = [
   { model: Producto, as: 'producto' },
   { model: Pedido, as: 'pedido' },
 ];
+const includeOperador = [
+  { model: Producto, as: 'producto', attributes: ['id', 'nombre', 'stock_actual', 'id_almacen'] },
+  { model: Pedido, as: 'pedido', attributes: ['id', 'fecha', 'estado', 'id_usuario'] },
+];
 
-exports.listar = async (_req, res) => {
+exports.listar = async (req, res) => {
   try {
-    return res.json(await DetallePedido.findAll({ include, order: [['id', 'ASC']] }));
+    const detalles = await DetallePedido.findAll({
+      include: req.user?.rol === 'operador' ? includeOperador : include,
+      attributes: req.user?.rol === 'operador'
+        ? ['id', 'id_pedido', 'id_producto', 'cantidad']
+        : undefined,
+      order: [['id', 'ASC']],
+    });
+    return res.json(detalles);
   } catch (error) {
     return responderError(res, error);
   }
@@ -21,7 +32,11 @@ exports.listar = async (_req, res) => {
 
 exports.obtener = async (req, res) => {
   try {
-    const detalle = await DetallePedido.findByPk(req.params.id, { include });
+    const esOperador = req.user?.rol === 'operador';
+    const detalle = await DetallePedido.findByPk(req.params.id, {
+      include: esOperador ? includeOperador : include,
+      attributes: esOperador ? ['id', 'id_pedido', 'id_producto', 'cantidad'] : undefined,
+    });
     if (!detalle) return res.status(404).json({ error: 'Detalle de pedido no encontrado.' });
     return res.json(detalle);
   } catch (error) {
@@ -78,7 +93,12 @@ exports.actualizar = async (req, res) => {
       }, { transaction });
       await recalcularTotal(pedido, transaction);
     });
-    return res.json(await DetallePedido.findByPk(id, { include }));
+    const esOperador = req.user?.rol === 'operador';
+    const detalle = await DetallePedido.findByPk(id, {
+      include: esOperador ? includeOperador : include,
+      attributes: esOperador ? ['id', 'id_pedido', 'id_producto', 'cantidad'] : undefined,
+    });
+    return res.json(detalle);
   } catch (error) {
     return responderError(res, error);
   }

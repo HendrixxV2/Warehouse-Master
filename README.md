@@ -25,8 +25,10 @@ Warehouse Master es un mini-WMS que permite administrar el catálogo de producto
 - **Control de stock transaccional**: crear un movimiento de `entrada` incrementa `productos.stock_actual`; uno de `salida` lo decrementa. Si el stock resultante sería negativo, la operación hace `rollback` y responde `400`.
 - **Dashboard ejecutivo** con 4 KPIs (total de productos, stock total, pedidos pendientes, productos con stock bajo), feed de actividad reciente y alertas de stock.
 - **Interfaz React** con sidebar fija oscura, tema claro/oscuro persistido, y componentes reutilizables (tabla, modal, badges, tarjetas de KPI).
-- **Paneles por rol**: supervisores y operarios usan el panel operativo; administración tiene acceso separado en `/admin/login` y gestiona usuarios y permisos en `/admin`.
-- **Acceso protegido**: solo administradores pueden usar los endpoints de usuarios y permisos; el registro público crea cuentas de operario.
+- **Paneles por rol**: el administrador tiene un panel separado para seguridad y datos maestros; supervisores acceden al dashboard y la gestión operativa; los operarios solo ven secciones de ejecución y consulta de stock.
+- **Mínimo privilegio en API y UI**: el servidor valida cada acción CRUD por rol. Los operarios no pueden modificar catálogo ni configuración, reportan incidencias, registran movimientos y ejecutan tareas de recepción y despacho. Los supervisores gestionan turnos, excepciones y ajustes operativos; solo administradores administran usuarios, permisos, auditorías y configuración maestra.
+- **Matriz de roles**: `/admin/permisos` documenta los accesos aplicados por el backend para Admin, Supervisor y Operario; los permisos se cambian en las rutas protegidas, no editando registros de catálogo.
+- **Funciones aún no implementadas**: integraciones ERP, configuración global, aprobación formal de ajustes, reasignación de tareas y reportes individuales de rendimiento no tienen módulos en el estado actual del proyecto.
 
 ---
 

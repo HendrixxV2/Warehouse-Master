@@ -2,8 +2,11 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import TaskAssistant from '../components/TaskAssistant';
+import { useAuth } from '../context/AuthContext';
 
 export default function AppShell() {
+  const { user } = useAuth();
+
   return (
     <div className="flex min-h-screen bg-base">
       <Sidebar />
@@ -18,7 +21,7 @@ export default function AppShell() {
           </div>
         </main>
       </div>
-      <TaskAssistant />
+      {user?.rol === 'supervisor' && <TaskAssistant />}
     </div>
   );
 }

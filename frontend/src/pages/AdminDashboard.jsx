@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Shield, Users } from 'lucide-react';
+import { ArrowUpRight, Shield, Users, Package, ClipboardCheck } from 'lucide-react';
 
 const SECTIONS = [
   {
@@ -10,9 +10,21 @@ const SECTIONS = [
   },
   {
     to: '/admin/permisos',
-    title: 'Permisos',
-    description: 'Consulta y configura permisos por módulo y perfil.',
+    title: 'Matriz de roles',
+    description: 'Consulta los accesos efectivos de Admin, Supervisor y Operario.',
     icon: Shield,
+  },
+  {
+    to: '/admin/productos',
+    title: 'Datos maestros',
+    description: 'Administra catálogo de productos y parámetros de almacén.',
+    icon: Package,
+  },
+  {
+    to: '/admin/auditorias',
+    title: 'Auditoría',
+    description: 'Consulta registros de auditoría del almacén.',
+    icon: ClipboardCheck,
   },
 ];
 
@@ -27,7 +39,7 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {SECTIONS.map(({ to, title, description, icon: Icon }) => (
           <Link
             key={to}

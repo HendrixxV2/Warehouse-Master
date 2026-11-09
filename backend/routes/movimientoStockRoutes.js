@@ -7,12 +7,16 @@ const {
   validarCrearMovimiento,
   validarActualizarMovimiento,
 } = require('../validators/movimientoStockValidator');
+const { autorizar } = require('../middleware/auth');
 
 router.param('id', validarId);
 router.get('/', ctrl.listar);
 router.get('/:id', ctrl.obtener);
-router.post('/', validarCrearMovimiento, ctrl.crear);
-router.put('/:id', validarActualizarMovimiento, ctrl.actualizar);
-router.delete('/:id', ctrl.eliminar);
+router.post('/', autorizar('supervisor', 'operador'), (req, res, next) => {
+  if (req.user.rol === 'operador') req.body.id_usuario = req.user.id;
+  next();
+}, validarCrearMovimiento, ctrl.crear);
+router.put('/:id', autorizar('supervisor'), validarActualizarMovimiento, ctrl.actualizar);
+router.delete('/:id', autorizar('supervisor'), ctrl.eliminar);
 
 module.exports = router;

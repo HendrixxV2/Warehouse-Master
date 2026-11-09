@@ -6,6 +6,7 @@ import Badge from '../ui/Badge';
 import Modal from '../ui/Modal';
 import Field, { Input } from '../ui/Field';
 import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const INITIAL = {
   nombre: '', precio: '', stock_actual: '',
@@ -13,6 +14,8 @@ const INITIAL = {
 };
 
 export default function Productos() {
+  const { user } = useAuth();
+  const canManage = user?.rol === 'admin';
   const [rows, setRows]         = useState([]);
   const [loading, setLoading]   = useState(true);
   const [query, setQuery]       = useState('');
@@ -80,7 +83,7 @@ export default function Productos() {
   const columns = [
     { key: 'id',           label: 'ID',        mono: true, render: (v) => <span className="text-fg-muted">#{v}</span> },
     { key: 'nombre',       label: 'Producto' },
-    { key: 'precio',       label: 'Precio',    align: 'right', mono: true, render: (v) => `$${Number(v).toFixed(2)}` },
+    ...(canManage ? [{ key: 'precio', label: 'Precio', align: 'right', mono: true, render: (v) => `$${Number(v).toFixed(2)}` }] : []),
     { key: 'stock_actual', label: 'Stock',     align: 'right', mono: true,
       render: (v) => (
         <Badge tone={v < 10 ? 'danger' : v < 30 ? 'warning' : 'success'}>{v} uds</Badge>
@@ -98,9 +101,9 @@ export default function Productos() {
             <span className="mono">{rows.length}</span> registros · control de catálogo
           </p>
         </div>
-        <Button onClick={openCreate}>
+        {canManage && <Button onClick={openCreate}>
           <Plus size={15} /> Nuevo producto
-        </Button>
+        </Button>}
       </div>
 
       {/* Barra de búsqueda */}
@@ -124,13 +127,13 @@ export default function Productos() {
         columns={columns}
         rows={filtered}
         loading={loading}
-        onEdit={openEdit}
-        onDelete={remove}
+        onEdit={canManage ? openEdit : undefined}
+        onDelete={canManage ? remove : undefined}
         emptyLabel="No hay productos que coincidan con la búsqueda"
       />
 
       {/* Modal */}
-      <Modal
+      {canManage && <Modal
         open={!!modal}
         onClose={() => setModal(null)}
         title={modal?.mode === 'edit' ? 'Editar producto' : 'Nuevo producto'}
@@ -165,7 +168,7 @@ export default function Productos() {
             <Input type="number" value={form.id_almacen} onChange={(e) => setForm({ ...form, id_almacen: e.target.value })} required />
           </Field>
         </form>
-      </Modal>
+      </Modal>}
 
       {/* Toast */}
       {toast && (

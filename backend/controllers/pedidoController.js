@@ -24,6 +24,67 @@ const controlador = crearControladorRecurso({
   ],
 });
 
+const listarCompleto = controlador.listar;
+const obtenerCompleto = controlador.obtener;
+const actualizarCompleto = controlador.actualizar;
+const incluirOperador = [
+  { model: Usuario, as: 'usuario', attributes: ['id', 'nombre'] },
+  {
+    model: DetallePedido,
+    as: 'detalles',
+    attributes: ['id', 'id_pedido', 'id_producto', 'cantidad'],
+    include: [{
+      model: Producto,
+      as: 'producto',
+      attributes: ['id', 'nombre', 'stock_actual', 'id_almacen'],
+    }],
+  },
+];
+
+controlador.listar = async (req, res) => {
+  if (req.user.rol !== 'operador') return listarCompleto(req, res);
+  try {
+    const pedidos = await Pedido.findAll({
+      attributes: ['id', 'fecha', 'estado', 'id_usuario'],
+      include: incluirOperador,
+      order: [['id', 'ASC']],
+    });
+    return res.json(pedidos);
+  } catch (error) {
+    return responderError(res, error);
+  }
+};
+
+controlador.obtener = async (req, res) => {
+  if (req.user.rol !== 'operador') return obtenerCompleto(req, res);
+  try {
+    const pedido = await Pedido.findByPk(req.params.id, {
+      attributes: ['id', 'fecha', 'estado', 'id_usuario'],
+      include: incluirOperador,
+    });
+    if (!pedido) return res.status(404).json({ error: 'Registro no encontrado.' });
+    return res.json(pedido);
+  } catch (error) {
+    return responderError(res, error);
+  }
+};
+
+controlador.actualizar = async (req, res) => {
+  if (req.user.rol !== 'operador') return actualizarCompleto(req, res);
+  try {
+    const pedido = await Pedido.findByPk(req.params.id);
+    if (!pedido) return res.status(404).json({ error: 'Registro no encontrado.' });
+    await pedido.update({ estado: req.body.estado });
+    const actualizado = await Pedido.findByPk(req.params.id, {
+      attributes: ['id', 'fecha', 'estado', 'id_usuario'],
+      include: incluirOperador,
+    });
+    return res.json(actualizado);
+  } catch (error) {
+    return responderError(res, error);
+  }
+};
+
 controlador.eliminar = async (req, res) => {
   try {
     await sequelize.transaction(async (transaction) => {

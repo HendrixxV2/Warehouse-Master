@@ -80,12 +80,13 @@ paragraph('Base URL: http://localhost:4000\nFormato: application/json\nAutentica
 title('Inicio rápido', 13);
 code('POST /api/auth/login');
 code('{ "email": "operador.demo@warehouse.local", "password": "WarehouseDemo123" }');
-paragraph('Las credenciales de demostración están disponibles tras ejecutar npm run seed:all. Copia el token devuelto y úsalo en los endpoints protegidos.');
+paragraph('Este acceso es para supervisores y operadores. Las cuentas administradoras deben usar POST /api/auth/admin/login. Las credenciales de demostración están disponibles tras ejecutar npm run seed:all. Copia el token devuelto y úsalo en los endpoints protegidos.');
 
 doc.addPage();
 title('Autenticación');
-endpoint({ method: 'POST', route: '/api/auth/register', description: 'Registra un usuario y genera un token JWT.', auth: false, body: { nombre: 'Juan Pérez', email: 'juan@empresa.com', password: 'ClaveSegura123', rol: 'operador' }, response: { token: 'eyJhbGci...', usuario: { id: 1, nombre: 'Juan Pérez', rol: 'operador' } } });
-endpoint({ method: 'POST', route: '/api/auth/login', description: 'Inicia sesión y devuelve un token JWT.', auth: false, body: { email: 'operador.demo@warehouse.local', password: 'WarehouseDemo123' }, response: { token: 'eyJhbGci...', usuario: { id: 1, nombre: 'Operador de demostración', rol: 'operador' } } });
+endpoint({ method: 'POST', route: '/api/auth/register', description: 'Registra un usuario de tipo operador y genera un token JWT.', auth: false, body: { nombre: 'Juan Pérez', email: 'juan@empresa.com', password: 'ClaveSegura123' }, response: { token: 'eyJhbGci...', usuario: { id: 1, nombre: 'Juan Pérez', rol: 'operador' } } });
+endpoint({ method: 'POST', route: '/api/auth/login', description: 'Inicia sesión de supervisor u operador y devuelve un token JWT. Las cuentas admin deben usar /api/auth/admin/login.', auth: false, body: { email: 'operador.demo@warehouse.local', password: 'WarehouseDemo123' }, response: { token: 'eyJhbGci...', usuario: { id: 1, nombre: 'Operador de demostración', rol: 'operador' } }, notes: 'Responde 403 si la cuenta tiene rol admin.' });
+endpoint({ method: 'POST', route: '/api/auth/admin/login', description: 'Inicia sesión exclusivamente para una cuenta con rol admin y devuelve un token JWT.', auth: false, body: { email: 'admin@empresa.com', password: 'ClaveSegura123' }, response: { token: 'eyJhbGci...', usuario: { id: 2, nombre: 'Administración', email: 'admin@empresa.com', rol: 'admin' } }, notes: 'Responde 403 si la cuenta no es administradora.' });
 endpoint({ method: 'GET', route: '/api/auth/me', description: 'Obtiene el usuario correspondiente al token enviado.', response: { id: 1, nombre: 'Operador de demostración', email: 'operador.demo@warehouse.local', rol: 'operador' } });
 
 const standardResources = [

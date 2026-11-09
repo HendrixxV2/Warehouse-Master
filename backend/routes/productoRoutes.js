@@ -5,13 +5,14 @@ const {
   validarCrearProducto,
   validarActualizarProducto,
 } = require('../validators/productoValidator');
+const { autorizar } = require('../middleware/auth');
 
 const router = express.Router();
 router.param('id', validarId);
 router.get('/', ctrl.listar);
 router.get('/:id', ctrl.obtener);
-router.post('/', validarCrearProducto, ctrl.crear);
-router.put('/:id', validarActualizarProducto, ctrl.actualizar);
-router.patch('/:id', validarActualizarProducto, ctrl.actualizar);
-router.delete('/:id', ctrl.eliminar);
+router.post('/', autorizar('admin'), validarCrearProducto, ctrl.crear);
+router.put('/:id', autorizar('admin'), validarActualizarProducto, ctrl.actualizar);
+router.patch('/:id', autorizar('admin'), validarActualizarProducto, ctrl.actualizar);
+router.delete('/:id', autorizar('admin'), ctrl.eliminar);
 module.exports = router;
