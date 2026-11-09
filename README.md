@@ -120,6 +120,8 @@ Las migraciones crean y actualizan las tablas conforme al código. Para cargar d
 
 ## 6. Verificación de autenticación con Postman
 
+También puedes importar [`postman/Warehouse-Master.postman_collection.json`](./postman/Warehouse-Master.postman_collection.json). Ajusta `baseUrl`, `email` y `password` en las variables de la colección; ejecuta **Autenticación → Login (guardar JWT)** primero. El script guarda el token en `jwt` y las solicitudes protegidas heredan automáticamente el encabezado Bearer. Usa **Usuario autenticado (probar JWT)** para validar la sesión. Si el token expira (10 minutos por defecto), vuelve a ejecutar el login. Si modificas `JWT_SECRET` o `JWT_EXPIRES_IN`, reinicia el backend y obtén un token nuevo. Las credenciales demo requieren `npm run seed:all`.
+
 La interfaz web se abre en `http://localhost:3000`; el puerto `4000` corresponde a la API. Los tokens expiran a los 10 minutos; si la API responde **“Token inválido o expirado”**, vuelve a iniciar sesión y sustituye el token guardado por el nuevo. En Postman, obtén uno con `POST http://localhost:4000/api/auth/login`, encabezado `Content-Type: application/json` y cuerpo JSON:
 
    ```json

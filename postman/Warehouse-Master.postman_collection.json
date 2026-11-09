@@ -1,0 +1,291 @@
+{
+  "info": {
+    "_postman_id": "74b710c0-6188-4e4f-9f34-955d83b728cc",
+    "name": "Warehouse Master API",
+    "description": "Autentica con Login para guardar el JWT automáticamente. Las solicitudes protegidas heredan el Bearer Token de la colección.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000/api",
+      "type": "string"
+    },
+    {
+      "key": "email",
+      "value": "operador.demo@warehouse.local",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "WarehouseDemo123",
+      "type": "string"
+    },
+    {
+      "key": "jwt",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Login (guardar JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test('Login exitoso y JWT recibido', function () {",
+                  "  pm.expect(pm.response.code).to.eql(200);",
+                  "  pm.expect(payload.token).to.be.a('string').and.not.empty;",
+                  "});",
+                  "if (pm.response.code === 200 && payload.token) {",
+                  "  pm.collectionVariables.set('jwt', payload.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/auth/login"
+          }
+        },
+        {
+          "name": "Usuario autenticado (probar JWT)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rutas protegidas - listar",
+      "item": [
+        {
+          "name": "Productos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/productos"
+          }
+        },
+        {
+          "name": "Movimientos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/movimientos"
+          }
+        },
+        {
+          "name": "Pedidos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/pedidos"
+          }
+        },
+        {
+          "name": "Detalles",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/detalles"
+          }
+        },
+        {
+          "name": "Proveedores",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/proveedores"
+          }
+        },
+        {
+          "name": "Categorías",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/categorias"
+          }
+        },
+        {
+          "name": "Almacenes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/almacenes"
+          }
+        },
+        {
+          "name": "Usuarios",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/usuarios"
+          }
+        },
+        {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dashboard/resumen"
+          }
+        },
+        {
+          "name": "Clientes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/clientes"
+          }
+        },
+        {
+          "name": "Transportistas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/transportistas"
+          }
+        },
+        {
+          "name": "Órdenes de compra",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/ordenes-compra"
+          }
+        },
+        {
+          "name": "Recepciones",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/recepciones"
+          }
+        },
+        {
+          "name": "Ubicaciones",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/ubicaciones"
+          }
+        },
+        {
+          "name": "Lotes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/lotes"
+          }
+        },
+        {
+          "name": "Auditorías",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auditorias"
+          }
+        },
+        {
+          "name": "Incidencias",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/incidencias"
+          }
+        },
+        {
+          "name": "Turnos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/turnos"
+          }
+        },
+        {
+          "name": "Paquetes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/paquetes"
+          }
+        },
+        {
+          "name": "Etiquetas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/etiquetas"
+          }
+        },
+        {
+          "name": "Tarifas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/tarifas"
+          }
+        },
+        {
+          "name": "Contratos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/contratos"
+          }
+        },
+        {
+          "name": "Inventario crítico",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/inventario-critico"
+          }
+        },
+        {
+          "name": "Pedidos internos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/pedidos-internos"
+          }
+        },
+        {
+          "name": "Costos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/costos"
+          }
+        },
+        {
+          "name": "Permisos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/permisos"
+          }
+        },
+        {
+          "name": "Pronóstico de demanda",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/services/forecast/demand"
+          }
+        }
+      ]
+    }
+  ]
+}
